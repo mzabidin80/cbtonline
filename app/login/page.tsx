@@ -8,7 +8,7 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export default function LoginPage() {
-  const [role, setRole] = useState('mahasiswa'); // Default lowercase murni
+  const [role, setRole] = useState('mahasiswa');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -20,7 +20,6 @@ export default function LoginPage() {
     setErrorMsg('');
 
     try {
-      // Menggunakan pencarian case-insensitive (.ilike) agar lebih aman untuk role
       const { data, error } = await supabase
         .from('users_cbt')
         .select('*')
@@ -34,26 +33,25 @@ export default function LoginPage() {
         return;
       }
 
-      // PENGAMAN UTAMA: Jika data kosong / tidak cocok dengan kombinasi di database
       if (!data || data.length === 0) {
         setErrorMsg('Username, password, atau peran tidak sesuai dengan database!');
         setLoading(false);
-        return; // Hentikan proses, jangan teruskan ke alert/dashboard
+        return;
       }
 
-      // Jika data ditemukan dengan sukses
+      // ✨ SISTEM CADANGAN BERLAPIS:
+      // Cari nama_lengkap, jika kosong gunakan username (NIM), jika kosong baru pakai 'Pengguna'
       const user = data;
-      const namaLengkap = user.nama_lengkap || 'Pengguna';
+      const namaLengkap = user.nama_lengkap || user.username || 'Pengguna';
       const roleUser = user.role || 'mahasiswa';
 
-      // Memunculkan nama asli dari kolom database secara akurat
+      // Memunculkan alert dengan nama yang berhasil diambil
       alert(`Selamat Datang, ${namaLengkap}! Login Berhasil.`);
 
-      // Simpan data string murni ke penyimpanan lokal browser
+      // Simpan ke memori browser lokal
       localStorage.setItem('user_role', String(roleUser).toLowerCase());
       localStorage.setItem('user_nama', String(namaLengkap));
 
-      // Pindah ke halaman dashboard setelah sukses
       window.location.href = '/dashboard';
 
     } catch (err) {
@@ -73,7 +71,7 @@ export default function LoginPage() {
 
         <form className="mt-8 space-y-6" onSubmit={handleLogin}>
           {errorMsg && (
-            <div className="bg-red-50 border-l-4 border-red-400 p-4 text-sm text-red-700 rounded-xlMAE">
+            <div className="bg-red-50 border-l-4 border-red-400 p-4 text-sm text-red-700 rounded-xl">
               ⚠️ {errorMsg}
             </div>
           )}
@@ -86,7 +84,6 @@ export default function LoginPage() {
                 onChange={(e) => setRole(e.target.value)}
                 className="block w-full px-3 py-3 border border-gray-300 rounded-xl text-gray-900 bg-white"
               >
-                {/* Value WAJIB huruf kecil murni agar sinkron dengan Supabase */}
                 <option value="mahasiswa">🎓 Mahasiswa (Peserta Ujian)</option>
                 <option value="pengawas">👁️ Pengawas / Dosen</option>
                 <option value="admin">🛠️ Administrator Sistem</option>
