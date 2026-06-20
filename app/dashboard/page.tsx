@@ -7,7 +7,6 @@ export default function DashboardPage() {
   const [nama, setNama] = useState('');
 
   useEffect(() => {
-    // Ambil data login dari browser
     const savedRole = localStorage.getItem('user_role') || 'mahasiswa';
     const savedNama = localStorage.getItem('user_nama') || 'Pengguna';
     setRole(savedRole);
@@ -34,7 +33,8 @@ export default function DashboardPage() {
           <button onClick={handleLogout} className="text-sm text-red-600 hover:underline font-medium">
             Keluar
           </button>
-        </nav>
+        </div>
+      </nav>
 
       {/* Konten Utama */}
       <div className="max-w-5xl mx-auto p-8">
