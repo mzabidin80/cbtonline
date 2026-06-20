@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { createClient } from '@supabase/supabase-js';
 
-// Pastikan inisialisasi diletakkan dengan aman
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
@@ -26,21 +25,18 @@ export default function LoginPage() {
         .select('*')
         .eq('username', username)
         .eq('password', password)
-        .eq('role', role)
-        .single();
+        .eq('role', role);
 
-      if (error || !data) {
+      if (error || !data || data.length === 0) {
         setErrorMsg('Username, password, atau peran salah!');
       } else {
-  alert(`Selamat Datang, ${data.nama_lengkap}! Login Berhasil.`);
-  
-  // ✨ Simpan data pengguna sementara di browser
-  localStorage.setItem('user_role', data.role);
-  localStorage.setItem('user_nama', data.nama_lengkap);
-  localStorage.setItem('user_username', data.username);
-  
-  window.location.href = '/dashboard';
-}
+        alert(`Selamat Datang, ${data.nama_lengkap}! Login Berhasil.`);
+        
+        // Simpan data login ke browser
+        localStorage.setItem('user_role', data.role);
+        localStorage.setItem('user_nama', data.nama_lengkap);
+        
+        window.location.href = '/dashboard';
       }
     } catch (err) {
       setErrorMsg('Terjadi kesalahan koneksi database.');
@@ -53,10 +49,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
         <div className="text-center">
-          <div className="mx-auto h-16 w-16 bg-blue-600 rounded-full flex items-center justify-center shadow-lg text-white font-bold text-2xl">
-            MZA
-          </div>
-          <h2 className="mt-6 text-3xl font-extrabold text-gray-900">Selamat Datang</h2>
+          <h2 className="text-3xl font-extrabold text-gray-900">Selamat Datang</h2>
           <p className="mt-2 text-sm text-gray-500">Sistem CBT Online MZA FEB ULM</p>
         </div>
 
@@ -73,7 +66,7 @@ export default function LoginPage() {
               <select
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
-                className="block w-full px-3 py-3 border border-gray-300 rounded-xl text-gray-900 bg-white shadow-sm"
+                className="block w-full px-3 py-3 border border-gray-300 rounded-xl text-gray-900 bg-white"
               >
                 <option value="mahasiswa">🎓 Mahasiswa (Peserta Ujian)</option>
                 <option value="pengawas">👁️ Pengawas / Dosen</option>
@@ -89,7 +82,7 @@ export default function LoginPage() {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 className="block w-full px-3 py-3 border border-gray-300 rounded-xl text-gray-900"
-                placeholder="Masukkan username atau NIM"
+                placeholder="Masukkan NIM atau Username"
               />
             </div>
 
@@ -110,7 +103,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-blue-600 hover:bg-blue-700 transition-colors shadow-md"
+              className="w-full flex justify-center py-3 px-4 text-sm font-medium rounded-xl text-white bg-blue-600 hover:bg-blue-700"
             >
               {loading ? 'Memverifikasi...' : 'Masuk Ke Sistem'}
             </button>
