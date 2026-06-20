@@ -6,13 +6,14 @@ export default function DashboardPage() {
   const [role, setRole] = useState('');
   const [nama, setNama] = useState('');
 
-useEffect(() => {
-    let savedRole = localStorage.getItem('user_role') || 'mahasiswa';
+  useEffect(() => {
+    const savedRole = localStorage.getItem('user_role') || 'mahasiswa';
     let savedNama = localStorage.getItem('user_nama') || 'Pengguna';
-
-    // Bersihkan histori 'undefined' dari error sebelumnya
-    if (savedRole === 'undefined') savedRole = 'mahasiswa';
-    if (savedNama === 'undefined') savedNama = 'Siswa';
+    
+    // Cegah kemunculan kata undefined di layar
+    if (savedNama === 'undefined' || !savedNama) {
+      savedNama = 'Mahasiswa';
+    }
 
     setRole(savedRole);
     setNama(savedNama);

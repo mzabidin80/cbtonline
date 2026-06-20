@@ -20,33 +20,32 @@ export default function LoginPage() {
     setErrorMsg('');
 
     try {
-      // ✨ Menggunakan 'as any' pada hasil destructuring agar TypeScript tidak rewel
       const { data, error } = await supabase
         .from('users_cbt')
         .select('*')
         .eq('username', username)
         .eq('password', password)
-        .eq('role', role) as any;
+        .eq('role', role);
 
       if (error) {
-        setErrorMsg('Terjadi kesalahan query database.');
+        setErrorMsg('Terjadi kesalahan koneksi database.');
         setLoading(false);
         return;
       }
 
-      // Validasi array data aman
       if (!data || data.length === 0) {
         setErrorMsg('Username, password, atau peran salah!');
       } else {
-        // ✨ Mengambil baris pertama dengan aman tanpa 'undefined'
-        const userNama = data.nama_lengkap;
-        const userRole = data.role;
+        // ✨ Ambil BARIS PERTAMA (index 0) dari database
+        const userData = data as any;
+        const namaUser = userData.nama_lengkap;
+        const roleUser = userData.role;
         
-        alert(`Selamat Datang, ${userNama}! Login Berhasil.`);
+        alert(`Selamat Datang, ${namaUser}! Login Berhasil.`);
         
-        // Simpan data login ke browser
-        localStorage.setItem('user_role', String(userRole));
-        localStorage.setItem('user_nama', String(userNama));
+        // Simpan data bersih ke browser
+        localStorage.setItem('user_role', String(roleUser));
+        localStorage.setItem('user_nama', String(namaUser));
         
         window.location.href = '/dashboard';
       }
