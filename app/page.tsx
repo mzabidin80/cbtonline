@@ -13,7 +13,7 @@ export default function LandingPage() {
       
       {/* 1. Bar Atas Warna Cokelat/Kuning Pastel */}
       <div className="bg-[#e6c294] py-1.5 px-4 text-xs font-mono text-gray-800 border-b border-gray-300">
-        e-ujian.com/bpuulm
+        CBT Online FEB ULM
       </div>
 
       {/* 2. Header & Navigasi Menu */}
