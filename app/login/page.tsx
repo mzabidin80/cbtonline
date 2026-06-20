@@ -33,17 +33,17 @@ export default function LoginPage() {
         return;
       }
 
-      // Pastikan data ditemukan dan tidak kosong
+      // Pastikan data ditemukan dan tidak kosong sebelum diakses
       if (!data || data.length === 0) {
         setErrorMsg('Username, password, atau peran salah!');
       } else {
-        // ✨ Ambil baris pertama langsung dari array secara eksplisit
+        // ✨ Menggunakan data untuk mengambil baris pertama dari database
         const userNama = data.nama_lengkap;
         const userRole = data.role;
         
         alert(`Selamat Datang, ${userNama}! Login Berhasil.`);
         
-        // Simpan data string murni ke local storage browser
+        // Simpan data ke local storage browser
         localStorage.setItem('user_role', String(userRole));
         localStorage.setItem('user_nama', String(userNama));
         
