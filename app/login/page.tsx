@@ -2,13 +2,14 @@
 
 import { useState } from 'react';
 import { createClient } from '@supabase/supabase-js';
+import { useRouter } from 'next/navigation'; // <-- Menambahkan library untuk pindah halaman
 
-// Mengaktifkan koneksi Supabase menggunakan Environment Variables yang sudah kita pasang di Vercel
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export default function LoginPage() {
+  const router = useRouter(); // <-- Mengaktifkan fungsi navigasi
   const [role, setRole] = useState('mahasiswa');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -21,7 +22,6 @@ export default function LoginPage() {
     setErrorMsg('');
 
     try {
-      // Mencari pengguna di tabel Supabase yang cocok dengan username, password, dan role-nya
       const { data, error } = await supabase
         .from('users_cbt')
         .select('*')
@@ -34,7 +34,9 @@ export default function LoginPage() {
         setErrorMsg('Username, password, atau peran yang Anda pilih salah!');
       } else {
         alert(`Selamat Datang, ${data.nama_lengkap}! Login Berhasil.`);
-        // Di sini nantinya kita akan arahkan (redirect) ke halaman dashboard masing-masing role
+        
+        // ✨ PERINTAH PINDAH HALAMAN OTOMATIS SETELAH KLIK OK
+        router.push('/dashboard'); 
       }
     } catch (err) {
       setErrorMsg('Terjadi kesalahan koneksi sistem.');
