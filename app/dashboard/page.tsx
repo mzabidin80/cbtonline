@@ -60,12 +60,12 @@ export default function DashboardPage() {
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
               <h3 className="text-lg font-bold text-blue-600">📝 Daftar Ujian Tersedia</h3>
               <p className="text-gray-500 text-sm mt-1">Klik untuk mulai masuk ke ruang ujian aktif.</p>
-              <button className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-xl text-sm font-medium w-full">
-                onClick={() => window.location.href = '/dashboard/ujian'}
-                className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-xl text-sm font-medium w-full hover:bg-blue-700 transition"
+             <button 
+  onClick={() => window.location.href = '/dashboard/ujian'}
+  className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-xl text-sm font-medium w-full hover:bg-blue-700 transition"
 >
-				Mulai Ujian
-              </button>
+  Mulai Ujian
+</button>
             </div>
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
               <h3 className="text-lg font-bold text-emerald-600">📊 Lihat Nilai & Hasil</h3>
