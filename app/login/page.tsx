@@ -1,29 +1,52 @@
 'use client';
 
 import { useState } from 'react';
+import { createClient } from '@supabase/supabase-js';
+
+// Mengaktifkan koneksi Supabase menggunakan Environment Variables yang sudah kita pasang di Vercel
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export default function LoginPage() {
   const [role, setRole] = useState('mahasiswa');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    
-    // Simulasi autentikasi sementara sebelum dicolok penuh ke fungsi database Supabase
-    setTimeout(() => {
-      alert(`Login berhasil sebagai ${role.toUpperCase()}!\nUsername: ${username}`);
+    setErrorMsg('');
+
+    try {
+      // Mencari pengguna di tabel Supabase yang cocok dengan username, password, dan role-nya
+      const { data, error } = await supabase
+        .from('users_cbt')
+        .select('*')
+        .eq('username', username)
+        .eq('password', password)
+        .eq('role', role)
+        .single();
+
+      if (error || !data) {
+        setErrorMsg('Username, password, atau peran yang Anda pilih salah!');
+      } else {
+        alert(`Selamat Datang, ${data.nama_lengkap}! Login Berhasil.`);
+        // Di sini nantinya kita akan arahkan (redirect) ke halaman dashboard masing-masing role
+      }
+    } catch (err) {
+      setErrorMsg('Terjadi kesalahan koneksi sistem.');
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
         
-        {/* Header Form */}
         <div className="text-center">
           <div className="mx-auto h-16 w-16 bg-blue-600 rounded-full flex items-center justify-center shadow-lg text-white font-bold text-2xl">
             MZA
@@ -36,11 +59,14 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {/* Form Login */}
         <form className="mt-8 space-y-6" onSubmit={handleLogin}>
+          {errorMsg && (
+            <div className="bg-red-50 border-l-4 border-red-400 p-4 rounded-xl text-sm text-red-700">
+              {errorMsg}
+            </div>
+          )}
+
           <div className="rounded-md space-y-4">
-            
-            {/* Pilihan Role / Peran */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Masuk Sebagai
@@ -56,7 +82,6 @@ export default function LoginPage() {
               </select>
             </div>
 
-            {/* Input Username / NIM */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 {role === 'mahasiswa' ? 'Nomor Induk Mahasiswa (NIM)' : 'Username / NIP'}
@@ -66,12 +91,11 @@ export default function LoginPage() {
                 required
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder={role === 'mahasiswa' ? 'Contoh: 2010312310001' : 'Contoh: admin_feb'}
+                placeholder={role === 'mahasiswa' ? 'Contoh: 2010312310001' : 'Contoh: admin123'}
                 className="appearance-none block w-full px-3 py-3 border border-gray-300 rounded-xl placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               />
             </div>
 
-            {/* Input Password */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Kata Sandi (Password)
@@ -87,7 +111,6 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* Tombol Submit */}
           <div>
             <button
               type="submit"
@@ -96,17 +119,7 @@ export default function LoginPage() {
                 loading ? 'opacity-70 cursor-not-allowed' : ''
               }`}
             >
-              {loading ? (
-                <span className="flex items-center">
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                  </svg>
-                  Memproses...
-                </span>
-              ) : (
-                'Masuk Ke Sistem'
-              )}
+              {loading ? 'Memverifikasi...' : 'Masuk Ke Sistem'}
             </button>
           </div>
         </form>
