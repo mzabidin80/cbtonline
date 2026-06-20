@@ -32,9 +32,15 @@ export default function LoginPage() {
       if (error || !data) {
         setErrorMsg('Username, password, atau peran salah!');
       } else {
-        alert(`Selamat Datang, ${data.nama_lengkap}! Login Berhasil.`);
-        // Navigasi browser murni, anti-gagal saat build di Vercel
-        window.location.href = '/dashboard';
+  alert(`Selamat Datang, ${data.nama_lengkap}! Login Berhasil.`);
+  
+  // ✨ Simpan data pengguna sementara di browser
+  localStorage.setItem('user_role', data.role);
+  localStorage.setItem('user_nama', data.nama_lengkap);
+  localStorage.setItem('user_username', data.username);
+  
+  window.location.href = '/dashboard';
+}
       }
     } catch (err) {
       setErrorMsg('Terjadi kesalahan koneksi database.');
