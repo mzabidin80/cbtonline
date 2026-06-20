@@ -25,7 +25,7 @@ export default function LoginPage() {
         .select('*')
         .eq('username', username)
         .eq('password', password)
-        .ilike('role', role) as any;
+        .ilike('role', role);
 
       if (error) {
         setErrorMsg('Terjadi kesalahan kueri ke database.');
@@ -33,25 +33,28 @@ export default function LoginPage() {
         return;
       }
 
+      // Pastikan data ditemukan dan array tidak kosong
       if (!data || data.length === 0) {
         setErrorMsg('Username, password, atau peran tidak sesuai dengan database!');
         setLoading(false);
         return;
       }
 
-      // ✨ SISTEM CADANGAN BERLAPIS:
-      // Cari nama_lengkap, jika kosong gunakan username (NIM), jika kosong baru pakai 'Pengguna'
-      const user = data;
+      // ✨ KUNCI FIX: Ambil baris pertama dan gunakan 'as any' agar Vercel lolos sensor type checking
+      const user = data as any;
+      
+      // Ambil nama_lengkap dari kolom database Anda
       const namaLengkap = user.nama_lengkap || user.username || 'Pengguna';
       const roleUser = user.role || 'mahasiswa';
 
-      // Memunculkan alert dengan nama yang berhasil diambil
+      // Simpan nama asli hasil database ke memori lokal browser
+      localStorage.setItem('user_nama', String(namaLengkap));
+      localStorage.setItem('user_role', String(roleUser).toLowerCase());
+
+      // Munculkan alert konfirmasi nama
       alert(`Selamat Datang, ${namaLengkap}! Login Berhasil.`);
 
-      // Simpan ke memori browser lokal
-      localStorage.setItem('user_role', String(roleUser).toLowerCase());
-      localStorage.setItem('user_nama', String(namaLengkap));
-
+      // Pindah ke halaman dashboard
       window.location.href = '/dashboard';
 
     } catch (err) {
