@@ -27,24 +27,27 @@ export default function LoginPage() {
         .eq('password', password)
         .eq('role', role);
 
-      // ✨ Pengaman TypeScript: Memastikan data tidak null dan memiliki isi array
-      if (error || !data || data.length === 0) {
+      if (error) {
+        setErrorMsg('Terjadi kesalahan query database.');
+        setLoading(false);
+        return;
+      }
+
+      // Pastikan data ditemukan dan tidak kosong
+      if (!data || data.length === 0) {
         setErrorMsg('Username, password, atau peran salah!');
       } else {
-        // ✨ Ambil elemen pertama dan tegaskan tipenya sebagai 'any' agar lolos compile
-        const user = data as any;
+        // ✨ Ambil baris pertama langsung dari array secara eksplisit
+        const userNama = data.nama_lengkap;
+        const userRole = data.role;
         
-        if (user) {
-          alert(`Selamat Datang, ${user.nama_lengkap}! Login Berhasil.`);
-          
-          // Simpan data login ke browser
-          localStorage.setItem('user_role', String(user.role));
-          localStorage.setItem('user_nama', String(user.nama_lengkap));
-          
-          window.location.href = '/dashboard';
-        } else {
-          setErrorMsg('Data pengguna gagal diproses.');
-        }
+        alert(`Selamat Datang, ${userNama}! Login Berhasil.`);
+        
+        // Simpan data string murni ke local storage browser
+        localStorage.setItem('user_role', String(userRole));
+        localStorage.setItem('user_nama', String(userNama));
+        
+        window.location.href = '/dashboard';
       }
     } catch (err) {
       setErrorMsg('Terjadi kesalahan koneksi database.');
