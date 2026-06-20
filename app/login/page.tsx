@@ -8,7 +8,7 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export default function LoginPage() {
-  const [role, setRole] = useState('mahasiswa');
+  const [role, setRole] = useState('mahasiswa'); // Default lowercase murni
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -20,37 +20,44 @@ export default function LoginPage() {
     setErrorMsg('');
 
     try {
+      // Menggunakan pencarian case-insensitive (.ilike) agar lebih aman untuk role
       const { data, error } = await supabase
         .from('users_cbt')
         .select('*')
         .eq('username', username)
         .eq('password', password)
-        .eq('role', role);
+        .ilike('role', role) as any;
 
       if (error) {
-        setErrorMsg('Terjadi kesalahan koneksi database.');
+        setErrorMsg('Terjadi kesalahan kueri ke database.');
         setLoading(false);
         return;
       }
 
+      // PENGAMAN UTAMA: Jika data kosong / tidak cocok dengan kombinasi di database
       if (!data || data.length === 0) {
-        setErrorMsg('Username, password, atau peran salah!');
-      } else {
-        // ✨ Ambil BARIS PERTAMA (index 0) dari database
-        const userData = data as any;
-        const namaUser = userData.nama_lengkap;
-        const roleUser = userData.role;
-        
-        alert(`Selamat Datang, ${namaUser}! Login Berhasil.`);
-        
-        // Simpan data bersih ke browser
-        localStorage.setItem('user_role', String(roleUser));
-        localStorage.setItem('user_nama', String(namaUser));
-        
-        window.location.href = '/dashboard';
+        setErrorMsg('Username, password, atau peran tidak sesuai dengan database!');
+        setLoading(false);
+        return; // Hentikan proses, jangan teruskan ke alert/dashboard
       }
+
+      // Jika data ditemukan dengan sukses
+      const user = data;
+      const namaLengkap = user.nama_lengkap || 'Pengguna';
+      const roleUser = user.role || 'mahasiswa';
+
+      // Memunculkan nama asli dari kolom database secara akurat
+      alert(`Selamat Datang, ${namaLengkap}! Login Berhasil.`);
+
+      // Simpan data string murni ke penyimpanan lokal browser
+      localStorage.setItem('user_role', String(roleUser).toLowerCase());
+      localStorage.setItem('user_nama', String(namaLengkap));
+
+      // Pindah ke halaman dashboard setelah sukses
+      window.location.href = '/dashboard';
+
     } catch (err) {
-      setErrorMsg('Terjadi kesalahan koneksi database.');
+      setErrorMsg('Terjadi kesalahan koneksi jaringan.');
     } finally {
       setLoading(false);
     }
@@ -66,8 +73,8 @@ export default function LoginPage() {
 
         <form className="mt-8 space-y-6" onSubmit={handleLogin}>
           {errorMsg && (
-            <div className="bg-red-50 border-l-4 border-red-400 p-4 text-sm text-red-700 rounded-xl">
-              {errorMsg}
+            <div className="bg-red-50 border-l-4 border-red-400 p-4 text-sm text-red-700 rounded-xlMAE">
+              ⚠️ {errorMsg}
             </div>
           )}
 
@@ -79,6 +86,7 @@ export default function LoginPage() {
                 onChange={(e) => setRole(e.target.value)}
                 className="block w-full px-3 py-3 border border-gray-300 rounded-xl text-gray-900 bg-white"
               >
+                {/* Value WAJIB huruf kecil murni agar sinkron dengan Supabase */}
                 <option value="mahasiswa">🎓 Mahasiswa (Peserta Ujian)</option>
                 <option value="pengawas">👁️ Pengawas / Dosen</option>
                 <option value="admin">🛠️ Administrator Sistem</option>
@@ -114,7 +122,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex justify-center py-3 px-4 text-sm font-medium rounded-xl text-white bg-blue-600 hover:bg-blue-700"
+              className="w-full flex justify-center py-3 px-4 text-sm font-medium rounded-xl text-white bg-blue-600 hover:bg-blue-700 transition"
             >
               {loading ? 'Memverifikasi...' : 'Masuk Ke Sistem'}
             </button>
