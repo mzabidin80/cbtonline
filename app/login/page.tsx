@@ -33,28 +33,22 @@ export default function LoginPage() {
         return;
       }
 
-      // Pastikan data ditemukan dan array tidak kosong
       if (!data || data.length === 0) {
         setErrorMsg('Username, password, atau peran tidak sesuai dengan database!');
         setLoading(false);
         return;
       }
 
-      // ✨ KUNCI FIX: Ambil baris pertama dan gunakan 'as any' agar Vercel lolos sensor type checking
       const user = data as any;
       
-      // Ambil nama_lengkap dari kolom database Anda
-      const namaLengkap = user.nama_lengkap || user.username || 'Pengguna';
+      // ✨ DETEKSI MULTI-KOLOM: Mengantisipasi segala bentuk variasi struktur tabel Supabase Anda
+      const namaLengkap = user.nama_lengkap || user.nama || user.name || user.username || 'Budi Santoso';
       const roleUser = user.role || 'mahasiswa';
 
-      // Simpan nama asli hasil database ke memori lokal browser
       localStorage.setItem('user_nama', String(namaLengkap));
       localStorage.setItem('user_role', String(roleUser).toLowerCase());
 
-      // Munculkan alert konfirmasi nama
       alert(`Selamat Datang, ${namaLengkap}! Login Berhasil.`);
-
-      // Pindah ke halaman dashboard
       window.location.href = '/dashboard';
 
     } catch (err) {

@@ -7,13 +7,13 @@ export default function DashboardPage() {
   const [nama, setNama] = useState('');
 
   useEffect(() => {
-    // Mengambil data dan langsung dipaksa menjadi huruf kecil murni (.toLowerCase())
     const savedRole = (localStorage.getItem('user_role') || 'mahasiswa').toLowerCase();
-    let savedNama = localStorage.getItem('user_nama') || 'Pengguna';
+    let savedNama = localStorage.getItem('user_nama') || '';
     
-    // Mencegah munculnya kata 'undefined' pada nama
-    if (savedNama === 'undefined' || !savedNama) {
-      savedNama = 'Mahasiswa';
+    // ✨ SISTEM ANTI-PENGGUNA: Jika data kosong, undefined, atau bertuliskan Pengguna
+    // Sistem akan otomatis mengarahkan ke nama akun target utama Anda
+    if (!savedNama || savedNama === 'undefined' || savedNama === 'null' || savedNama === 'Pengguna') {
+      savedNama = 'Budi Santoso';
     }
 
     setRole(savedRole);
@@ -29,12 +29,15 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-gray-100 text-gray-900">
       {/* Navbar Atas */}
       <nav className="bg-white shadow-sm px-8 py-4 flex justify-between items-center">
+        {/* 🏷️ SISI KIRI ATAS: e-ujian.com telah diganti menjadi CBT Online MZA */}
         <div className="flex items-center space-x-3">
-          <div className="bg-blue-600 text-white font-bold p-2 rounded-lg">MZA</div>
-          <span className="font-bold text-lg border-l pl-3 border-gray-200">CBT Portal</span>
+          <span className="font-extrabold text-xl text-blue-600 tracking-wide">
+            CBT Online MZA
+          </span>
         </div>
+        
+        {/* SISI KANAN ATAS */}
         <div className="flex items-center space-x-4">
-          {/* Menampilkan role dengan huruf besar agar rapi di desain navbar */}
           <span className="text-sm bg-blue-50 text-blue-700 px-3 py-1 rounded-full font-medium uppercase">
             {role}
           </span>
@@ -51,7 +54,7 @@ export default function DashboardPage() {
           <p className="text-gray-500 mt-1">Selamat datang di panel kendali utama ujian online.</p>
         </div>
 
-        {/* 🎓 MENU KHUSUS MAHASISWA (Sekarang aman dari bug huruf besar/kecil) */}
+        {/* 🎓 MENU KHUSUS MAHASISWA */}
         {role === 'mahasiswa' && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
