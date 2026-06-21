@@ -12,11 +12,9 @@ export default function DashboardPage() {
   const [role, setRole] = useState('');
   const [username, setUsername] = useState('');
   
-  // State untuk dropdown menu profil & modal ubah password
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   
-  // State form ubah password
   const [passwordBaru, setPasswordBaru] = useState('');
   const [konfirmasiPassword, setKonfirmasiPassword] = useState('');
   const [loadingPassword, setLoadingPassword] = useState(false);
@@ -24,8 +22,6 @@ export default function DashboardPage() {
   useEffect(() => {
     setNamaMhs(localStorage.getItem('user_nama') || 'Budi Santoso');
     setRole(localStorage.getItem('user_role') || 'mahasiswa');
-    
-    // MENGAMBIL USERNAME / NIM ASLI (Contoh: 2010312310001)
     setUsername(localStorage.getItem('user_username') || '2010312310001');
   }, []);
 
@@ -34,7 +30,6 @@ export default function DashboardPage() {
     window.location.href = '/login';
   };
 
-  // Fungsi memproses pembaruan password di Supabase tabel users_cbt
   const handleUpdatePassword = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -49,7 +44,6 @@ export default function DashboardPage() {
 
     setLoadingPassword(true);
     try {
-      // ✨ PERBAIKAN UTAMA: Pencarian data menggunakan kolom 'username' (NIM), bukan 'nama_lengkap'
       const { data, error } = await supabase
         .from('users_cbt')
         .update({ password: passwordBaru })
@@ -58,7 +52,6 @@ export default function DashboardPage() {
 
       if (error) throw error;
 
-      // Proteksi mendeteksi jika baris di Supabase tidak ada yang berubah
       if (!data || data.length === 0) {
         alert(`Gagal merubah! Akun dengan Username/NIM "${username}" tidak ditemukan di database Supabase.`);
         return;
@@ -78,7 +71,6 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col text-gray-900 relative">
       
-      {/* 🏙️ HEADER NAVIGASI DENGAN DROPDOWN MENU PENGGUNA */}
       <header className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
           
@@ -91,7 +83,6 @@ export default function DashboardPage() {
             </span>
           </div>
 
-          {/* 👤 MENU PROFIL INTERAKTIF */}
           <div className="relative">
             <button 
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -123,4 +114,133 @@ export default function DashboardPage() {
                 
                 <button
                   onClick={handleLogout}
-                  className="w-full text-left px-4 py-2.5 text-sm font-bold text-red-600 hover:bg-
+                  className="w-full text-left px-4 py-2.5 text-sm font-bold text-red-600 hover:bg-red-50 transition flex items-center space-x-2"
+                >
+                  <span>🚪</span>
+                  <span>Log Out</span>
+                </button>
+              </div>
+            )}
+          </div>
+
+        </div>
+      </header>
+
+      <main className="flex-1 max-w-5xl w-full mx-auto p-6 space-y-6">
+        
+        <div className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100">
+          <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900 flex items-center gap-2">
+            Halo, {namaMhs}! 👋
+          </h1>
+          <p className="text-gray-500 text-sm md:text-base mt-2">
+            Selamat datang di panel kendali utama ujian online Fakultas Ekonomi dan Bisnis ULM.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
+            <div className="flex items-center space-x-3">
+              <span className="text-2xl">📝</span>
+              <h2 className="font-bold text-gray-800 text-lg">Daftar Ujian Tersedia</h2>
+            </div>
+            <p className="text-xs text-gray-500">Klik untuk mulai masuk ke dalam ruang ujian aktif Anda hari ini.</p>
+            <button 
+              onClick={() => window.location.href = '/dashboard/ujian'}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl text-sm transition shadow-md shadow-blue-600/10"
+            >
+              Mulai Ujian
+            </button>
+          </div>
+
+          <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
+            <div className="flex items-center space-x-3">
+              <span className="text-2xl">📊</span>
+              <h2 className="font-bold text-gray-800 text-lg">Lihat Nilai & Hasil</h2>
+            </div>
+            <p className="text-xs text-gray-500">Lihat histori daftar rekapitulasi nilai ujian yang telah Anda selesaikan.</p>
+            <button 
+              onClick={() => window.location.href = '/dashboard/riwayat'}
+              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-sm transition shadow-md shadow-emerald-600/10"
+            >
+              Buka Riwayat Nilai
+            </button>
+          </div>
+
+        </div>
+      </main>
+
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-gray-100 space-y-4 animate-in zoom-in-95 duration-150">
+            
+            <div className="flex justify-between items-center border-b pb-3">
+              <h3 className="font-extrabold text-gray-900 text-lg flex items-center gap-2">
+                🔑 Ubah Password
+              </h3>
+              <button 
+                onClick={() => setIsModalOpen(false)}
+                className="text-gray-400 hover:text-gray-600 font-bold text-sm bg-gray-100 px-2.5 py-1 rounded-lg"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleUpdatePassword} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold uppercase text-gray-500 mb-1">Username / NIM Anda</label>
+                <input 
+                  type="text" 
+                  value={username} 
+                  disabled 
+                  className="w-full bg-gray-100 text-gray-500 p-3 rounded-xl border border-gray-200 text-sm font-medium outline-none cursor-not-allowed"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold uppercase text-gray-500 mb-1">Password Baru</label>
+                <input 
+                  type="password" 
+                  placeholder="Ketik password baru..." 
+                  value={passwordBaru}
+                  onChange={(e) => setPasswordBaru(e.target.value)}
+                  className="w-full bg-white text-gray-800 p-3 rounded-xl border border-gray-200 text-sm font-medium outline-none focus:border-blue-500 transition"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold uppercase text-gray-500 mb-1">Konfirmasi Password Baru</label>
+                <input 
+                  type="password" 
+                  placeholder="Ulangi password baru..." 
+                  value={konfirmasiPassword}
+                  onChange={(e) => setKonfirmasiPassword(e.target.value)}
+                  className="w-full bg-white text-gray-800 p-3 rounded-xl border border-gray-200 text-sm font-medium outline-none focus:border-blue-500 transition"
+                />
+              </div>
+
+              <div className="pt-2 flex space-x-3">
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="w-1/2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 rounded-xl text-sm transition"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  disabled={loadingPassword}
+                  className="w-1/2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-bold py-3 rounded-xl text-sm transition shadow-md"
+                >
+                  {loadingPassword ? 'Menyimpan...' : 'Simpan Sandi'}
+                </button>
+              </div>
+            </form>
+
+          </div>
+        </div>
+      )}
+
+    </div>
+  );
+}
