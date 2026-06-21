@@ -3,7 +3,9 @@
 import { useState } from 'react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const [isManajemenOpen, setIsManajemenOpen] = useState(true); // Default terbuka sesuai fokus kita
+  // State untuk mengontrol buka-tutup dropdown menu sidebar
+  const [isUjianOnlineOpen, setIsUjianOnlineOpen] = useState(true); // Default terbuka
+  const [isManajemenOpen, setIsManajemenOpen] = useState(false);
 
   const handleLogout = () => {
     localStorage.clear();
@@ -13,7 +15,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <div className="min-h-screen bg-slate-100 flex font-sans antialiased text-slate-800">
       {/* SIDEBAR LEFT */}
-      <aside className="w-64 bg-slate-900 text-slate-300 flex flex-col justify-between p-4 shadow-xl border-r border-slate-800 shrink-0 sticky top-0 h-screen overflow-y-auto">
+      <aside className="w-64 bg-slate-900 text-slate-300 flex flex-col justify-between p-4 shadow-xl border-r border-slate-800 shrink-0 sticky top-0 h-screen overflow-y-auto custom-scrollbar">
         <div>
           {/* Logo Brand */}
           <div className="flex items-center gap-3 mb-6 px-2 py-1">
@@ -23,11 +25,39 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           
           {/* Menu Navigation */}
           <nav className="space-y-1.5 text-sm font-semibold">
+            {/* 1. DASHBOARD */}
             <a href="/admin" className="flex items-center gap-3 px-3.5 py-2.5 hover:bg-slate-800 hover:text-white rounded-xl transition text-slate-400">
               📊 Dashboard
             </a>
 
-            {/* KELOMPOK MENU: MANAJEMEN DROPDOWN */}
+            {/* 2. DROPDOWN: UJIAN ONLINE */}
+            <div>
+              <button 
+                onClick={() => setIsUjianOnlineOpen(!isUjianOnlineOpen)}
+                className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition text-left ${
+                  isUjianOnlineOpen ? 'bg-slate-800/80 text-blue-400' : 'hover:bg-slate-800 hover:text-white text-slate-400'
+                }`}
+              >
+                <span className="flex items-center gap-3">💼 Ujian Online</span>
+                <span className="text-xs transition-transform duration-200">{isUjianOnlineOpen ? '▼' : '▶'}</span>
+              </button>
+
+              {/* SUB-MENU UJIAN ONLINE (Sesuai Gambar Referensi) */}
+              {isUjianOnlineOpen && (
+                <div className="mt-1 pl-4 space-y-1 border-l border-slate-800 ml-5 text-xs text-slate-400 font-medium">
+                  <a href="#" className="block px-3 py-2 hover:text-white transition">Kategori Materi</a>
+                  <a href="#" className="block px-3 py-2 hover:text-white transition">Paket Soal</a>
+                  <a href="#" className="block px-3 py-2 hover:text-white transition">Sesi Pelaksanaan</a>
+                  <a href="#" className="block px-3 py-2 hover:text-white transition">Ruang Ujian</a>
+                  <a href="#" className="block px-3 py-2 hover:text-white transition">Koreksi Ujian</a>
+                  <a href="#" className="block px-3 py-2 hover:text-white transition">Laporan</a>
+                  <a href="#" className="block px-3 py-2 hover:text-white transition">Reset Data</a>
+                  <a href="#" className="block px-3 py-2 hover:text-white transition">Pembelian Poin</a>
+                </div>
+              )}
+            </div>
+
+            {/* 3. DROPDOWN: MANAJEMEN */}
             <div>
               <button 
                 onClick={() => setIsManajemenOpen(!isManajemenOpen)}
@@ -39,13 +69,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <span className="text-xs transition-transform duration-200">{isManajemenOpen ? '▼' : '▶'}</span>
               </button>
 
-              {/* SUB-MENU KASKADE (Sesuai Gambar Referensi Anda) */}
+              {/* SUB-MENU MANAJEMEN */}
               {isManajemenOpen && (
                 <div className="mt-1 pl-4 space-y-1 border-l border-slate-800 ml-5 text-xs text-slate-400 font-medium">
                   <a href="#" className="block px-3 py-2 hover:text-white transition">Data Lembaga</a>
                   <a href="#" className="block px-3 py-2 hover:text-white transition">Data Operator</a>
-                  {/* Menu Aktif yang Kita Bangun */}
-                  <a href="/admin/manajemen/peserta" className="block px-3 py-2 bg-blue-600/10 text-blue-400 rounded-lg font-bold transition">Data Peserta</a>
+                  <a href="/admin/manajemen/peserta" className="block px-3 py-2 hover:text-white transition">Data Peserta</a>
                   <a href="#" className="block px-3 py-2 hover:text-white transition">Kelompok Peserta</a>
                   <a href="#" className="block px-3 py-2 hover:text-white transition">Data Ruang</a>
                   <a href="#" className="block px-3 py-2 hover:text-white transition">Konversi Skor</a>
@@ -62,12 +91,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               )}
             </div>
 
-            <a href="#" className="flex items-center gap-3 px-3.5 py-2.5 hover:bg-slate-800 hover:text-white rounded-xl transition text-slate-400">
-              📝 Bank Soal
-            </a>
-            <a href="#" className="flex items-center gap-3 px-3.5 py-2.5 hover:bg-slate-800 hover:text-white rounded-xl transition text-slate-400">
-              📅 Jadwal Ujian
-            </a>
+            {/* MENU LAINNYA */}
             <a href="#" className="flex items-center gap-3 px-3.5 py-2.5 hover:bg-slate-800 hover:text-white rounded-xl transition text-slate-400">
               📊 Rekap Hasil Nilai
             </a>
@@ -77,7 +101,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         {/* Tombol Logout Samping */}
         <button 
           onClick={handleLogout}
-          className="w-full bg-slate-800 hover:bg-red-950 text-slate-400 hover:text-red-400 text-xs font-bold py-2 rounded-xl transition border border-slate-800/40"
+          className="w-full bg-slate-800 hover:bg-red-950 text-slate-400 hover:text-red-400 text-xs font-bold py-2 rounded-xl transition border border-slate-800/40 mt-4 shrink-0"
         >
           Keluar Admin
         </button>
@@ -100,10 +124,24 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </header>
 
         {/* AREA HALAMAN UTAMA */}
-        <main className="flex-1">
+        <main className="flex-1 overflow-y-auto">
           {children}
         </main>
       </div>
+
+      {/* CSS internal mini untuk mempercantik scrollbar jika menu terlalu panjang */}
+      <style jsx global>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: rgba(15, 23, 42, 1);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: rgba(51, 65, 85, 1);
+          border-radius: 10px;
+        }
+      `}</style>
     </div>
   );
 }
