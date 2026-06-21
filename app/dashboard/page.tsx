@@ -166,7 +166,7 @@ export default function DashboardPage() {
             </div>
             <p className="text-xs text-gray-500">Lihat histori daftar rekapitulasi nilai ujian yang telah Anda selesaikan.</p>
             <button 
-              onClick={() => alert('Fitur ini akan kita aktifkan di tahap selanjutnya!')}
+              onClick={() => window.location.href = '/dashboard/riwayat'}
               className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-sm transition shadow-md shadow-emerald-600/10"
             >
               Buka Riwayat Nilai
