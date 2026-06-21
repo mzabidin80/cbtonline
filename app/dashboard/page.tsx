@@ -19,12 +19,20 @@ export default function DashboardPage() {
   const [konfirmasiPassword, setKonfirmasiPassword] = useState('');
   const [loadingPassword, setLoadingPassword] = useState(false);
 
-  useEffect(() => {
+useEffect(() => {
     setNamaMhs(localStorage.getItem('user_nama') || 'Budi Santoso');
     setRole(localStorage.getItem('user_role') || 'mahasiswa');
-    setUsername(localStorage.getItem('user_username') || '2010312310001');
+    
+    // Ambil data dari memori browser
+    const storedUsername = localStorage.getItem('user_username');
+    
+    // Proteksi: Jika datanya kosong, null, atau malah berupa teks "undefined", paksa gunakan NIM asli
+    if (!storedUsername || storedUsername === 'undefined' || storedUsername === 'null') {
+      setUsername('2010312310001');
+    } else {
+      setUsername(storedUsername);
+    }
   }, []);
-
   const handleLogout = () => {
     localStorage.clear();
     window.location.href = '/login';
