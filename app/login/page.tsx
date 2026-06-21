@@ -46,6 +46,7 @@ export default function LoginPage() {
       const roleUser = user.role || 'mahasiswa';
 
       localStorage.setItem('user_nama', String(namaLengkap));
+      localStorage.setItem('user_username', String(user.username));
       localStorage.setItem('user_role', String(roleUser).toLowerCase());
 
       alert(`Selamat Datang, ${namaLengkap}! Login Berhasil.`);
