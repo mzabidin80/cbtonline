@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { createClient } from '@supabase/supabase-js';
-import Head from 'next/head';
 
 // Konfigurasi Supabase
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
@@ -21,7 +20,7 @@ export default function AdminLoginPage() {
     setErrorMsg('');
 
     try {
-      // Memeriksa data pengguna di database
+      // Memeriksa data pengguna di database user_admin
       const { data, error } = await supabase
         .from('user_admin')
         .select('*')
@@ -33,7 +32,7 @@ export default function AdminLoginPage() {
         throw new Error('Username atau Password Admin salah!');
       }
 
-      // Pastikan rolenya benar-benar "admin"
+      // Memeriksa apakah role sesuai dengan 'admin' (setelah kolom role ditambahkan di Supabase)
       if (data.role !== 'admin') {
         throw new Error('Akses Ditolak! Anda tidak memiliki izin administrator.');
       }
@@ -54,12 +53,10 @@ export default function AdminLoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-900 p-4">
-      {/* Ini untuk mengubah Judul di Tab Browser */}
       <title>Login Administrator - CBT Online</title>
 
       <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-xl">
         
-        {/* INI BAGIAN JUDUL HALAMAN YANG DIPERBAIKI */}
         <div className="text-center mb-8">
           <h1 className="text-2xl font-black text-slate-800">Portal Administrator CBT</h1>
           <p className="text-sm text-slate-500 mt-2">Silakan login menggunakan akun Admin Anda.</p>
