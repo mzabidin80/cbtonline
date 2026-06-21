@@ -20,17 +20,28 @@ export default function PengawasDashboardLayout({ children }: { children: React.
   const [pesanError, setPesanError] = useState('');
 
   useEffect(() => {
-    // Sinkronisasi data login pengawas
-    const storedUsername = localStorage.getItem('user_username') || localStorage.getItem('pengawas_username');
-    const storedNama = localStorage.getItem('user_nama') || localStorage.getItem('pengawas_nama');
+    // Sinkronisasi data nama login pengawas
+    const storedNama = localStorage.getItem('user_nama') || localStorage.getItem('pengawas_nama') || localStorage.getItem('nama');
     const role = localStorage.getItem('user_role');
 
     // Proteksi Keamanan Halaman
     if (!storedNama || role !== 'pengawas') {
       window.location.href = '/pengawas-login';
-    } else {
-      if (storedUsername) setUsernamePengawas(storedUsername);
-      if (storedNama) setNamaPengawas(storedNama);
+      return;
+    }
+
+    if (storedNama) setNamaPengawas(storedNama);
+
+    // 🔍 SULUSI "TIDAK TERDETEKSI": Mencari segala kemungkinan key username yang disimpan memori browser
+    const detectUsername = 
+      localStorage.getItem('user_username') || 
+      localStorage.getItem('pengawas_username') || 
+      localStorage.getItem('username') || 
+      localStorage.getItem('user_id') ||
+      localStorage.getItem('id');
+
+    if (detectUsername) {
+      setUsernamePengawas(detectUsername);
     }
   }, []);
 
@@ -44,7 +55,7 @@ export default function PengawasDashboardLayout({ children }: { children: React.
     setPesanError('');
 
     if (!usernamePengawas) {
-      setPesanError('Sesi tidak ditemukan. Silakan login kembali.');
+      setPesanError('Sesi tidak ditemukan atau ID kosong. Silakan login kembali.');
       return;
     }
 
@@ -60,7 +71,7 @@ export default function PengawasDashboardLayout({ children }: { children: React.
 
     setLoading(true);
     try {
-      // 🎯 Mengincar tabel user_pengawas di database Anda
+      // 🎯 Mengincar tabel user_pengawas di database Supabase Anda
       const { data, error } = await supabase
         .from('user_pengawas')
         .update({ password: passwordBaru })
@@ -70,7 +81,7 @@ export default function PengawasDashboardLayout({ children }: { children: React.
       if (error) throw error;
 
       if (!data || data.length === 0) {
-        setPesanError(`Gagal: Akun "${usernamePengawas}" tidak ditemukan.`);
+        setPesanError(`Gagal: Akun pengawas dengan ID "${usernamePengawas}" tidak ditemukan di database.`);
         setLoading(false);
         return;
       }
