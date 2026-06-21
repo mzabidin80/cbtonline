@@ -49,11 +49,12 @@ export default function DosenDashboardLayout({ children }: { children: React.Rea
 
     setLoading(true);
     try {
-      // 🔌 PROSES REAL DATABASE: Mengubah nama tabel ke 'user_dosen' sesuai struktur Supabase Anda
+      // PROSES REAL DATABASE: Update data password di tabel users_cbt khusus untuk role dosen
       const { data, error } = await supabase
-        .from('user_dosen')
+        .from('users_cbt')
         .update({ password: passwordBaru })
-        .eq('username', usernameDosen);
+        .eq('username', usernameDosen)
+        .eq('role', 'dosen');
 
       if (error) throw error;
 
@@ -88,7 +89,7 @@ export default function DosenDashboardLayout({ children }: { children: React.Rea
               <p className="font-extrabold text-xs text-white flex items-center gap-1">
                 {namaDosen} <span className="text-[10px] text-emerald-200">{isMenuOpen ? '▲' : '▼'}</span>
               </p>
-              <p className="text-[9px] font-bold text-emerald-200 uppercase tracking-widest">Username: {usernameDosen || 'Dosen'}</p>
+              <p className="text-[9px] font-bold text-emerald-200 uppercase tracking-widest">NIDN/ID: {usernameDosen || 'Dosen'}</p>
             </div>
             <div className="w-8 h-8 bg-white text-emerald-700 font-black text-xs flex items-center justify-center rounded-xl shadow-md uppercase">
               {namaDosen.charAt(0)}
@@ -124,16 +125,19 @@ export default function DosenDashboardLayout({ children }: { children: React.Rea
         </div>
       </header>
 
-      {/* AREA UTAMA KONTEN INTERAL DOSEN */}
+      {/* AREA UTAMA UNTUK HALAMAN KONTEN INTERAL DOSEN */}
       <main className="flex-1 p-4 sm:p-6 max-w-7xl w-full mx-auto">
         {children}
       </main>
 
-      {/* MODAL POP-UP UBAH PASSWORD DOSEN */}
+      {/* ========================================== */}
+      {/* MODAL POP-UP UBAH PASSWORD DOSEN           */}
+      {/* ========================================== */}
       {isModalPasswordOpen && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl shadow-2xl border border-slate-200/80 w-full max-w-md overflow-hidden">
             
+            {/* Header Modal */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
               <h3 className="font-bold text-sm text-slate-800 flex items-center gap-2">
                 🔑 Ubah Password Akun
@@ -146,6 +150,7 @@ export default function DosenDashboardLayout({ children }: { children: React.Rea
               </button>
             </div>
 
+            {/* Form Modal */}
             <form onSubmit={handleSimpanPasswordDosen} className="p-5 space-y-4">
               {pesanError && (
                 <div className="p-2.5 bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold rounded-xl">
@@ -153,9 +158,10 @@ export default function DosenDashboardLayout({ children }: { children: React.Rea
                 </div>
               )}
 
+              {/* Field NIDN */}
               <div>
                 <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
-                  USERNAME / ID DOSEN
+                  NIDN / USERNAME DOSEN
                 </label>
                 <input 
                   type="text" 
@@ -165,6 +171,7 @@ export default function DosenDashboardLayout({ children }: { children: React.Rea
                 />
               </div>
 
+              {/* Input Password Baru */}
               <div>
                 <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">
                   PASSWORD BARU
@@ -179,6 +186,7 @@ export default function DosenDashboardLayout({ children }: { children: React.Rea
                 />
               </div>
 
+              {/* Konfirmasi Input */}
               <div>
                 <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">
                   KONFIRMASI PASSWORD BARU
@@ -193,6 +201,7 @@ export default function DosenDashboardLayout({ children }: { children: React.Rea
                 />
               </div>
 
+              {/* Tombol Aksi */}
               <div className="flex gap-2 pt-2 text-xs font-bold">
                 <button 
                   type="button"
