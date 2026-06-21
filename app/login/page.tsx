@@ -75,18 +75,13 @@ export default function LoginPage() {
           )}
 
           <div className="rounded-md space-y-4">
-            <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1">Masuk Sebagai</label>
-              <select
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-              className="w-full border border-slate-300 px-4 py-3 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 bg-white"
-  >
-              <option value="mahasiswa">🎓 Mahasiswa (Peserta Ujian)</option>
-              <option value="pengawas">👁️ Pengawas / Dosen</option>
-              {/* Pilihan Administrator Sistem telah dihapus dari sini */}
-            </select>
-            </div>
+        <div>
+         <label className="block text-sm font-bold text-slate-700 mb-1">Masuk Sebagai</label>
+         <div className="w-full bg-slate-100 border border-slate-300 px-4 py-3 rounded-xl font-medium text-slate-700 flex items-center gap-2">
+         🎓 Mahasiswa (Peserta Ujian)
+         </div>
+         {/* Kita kunci role-nya di latar belakang agar tetap mengirimkan nilai 'mahasiswa' saat tombol ditekan */}
+         </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Username / NIM</label>
