@@ -3,11 +3,14 @@
 import { useState } from 'react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  // State untuk mengontrol buka-tutup dropdown menu sidebar
-  const [isDataUserOpen, setIsDataUserOpen] = useState(true); // Default terbuka untuk melihat hasil perubahan
+  // State untuk dropdown menu sidebar
+  const [isDataUserOpen, setIsDataUserOpen] = useState(false);
   const [isUjianOnlineOpen, setIsUjianOnlineOpen] = useState(false);
   const [isManajemenOpen, setIsManajemenOpen] = useState(false);
   const [isRekapDataOpen, setIsRekapDataOpen] = useState(false);
+
+  // State baru untuk dropdown profil Admin di kanan atas
+  const [isAdminMenuOpen, setIsAdminMenuOpen] = useState(false);
 
   const handleLogout = () => {
     localStorage.clear();
@@ -32,7 +35,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               📊 Dashboard
             </a>
 
-            {/* 2. DROPDOWN BARU: DATA USER */}
+            {/* 2. DATA USER */}
             <div>
               <button 
                 onClick={() => setIsDataUserOpen(!isDataUserOpen)}
@@ -54,7 +57,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               )}
             </div>
 
-            {/* 3. DROPDOWN: UJIAN ONLINE */}
+            {/* 3. UJIAN ONLINE */}
             <div>
               <button 
                 onClick={() => setIsUjianOnlineOpen(!isUjianOnlineOpen)}
@@ -81,7 +84,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               )}
             </div>
 
-            {/* 4. DROPDOWN: MANAJEMEN */}
+            {/* 4. MANAJEMEN */}
             <div>
               <button 
                 onClick={() => setIsManajemenOpen(!isManajemenOpen)}
@@ -93,12 +96,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <span className="text-xs transition-transform duration-200">{isManajemenOpen ? '▼' : '▶'}</span>
               </button>
 
-              {/* SUB-MENU MANAJEMEN (Data Peserta tetap berada di sini) */}
+              {/* SUB-MENU MANAJEMEN */}
               {isManajemenOpen && (
                 <div className="mt-1 pl-4 space-y-1 border-l border-slate-800 ml-5 text-xs text-slate-400 font-medium">
                   <a href="#" className="block px-3 py-2 hover:text-white transition">Data Lembaga</a>
                   <a href="#" className="block px-3 py-2 hover:text-white transition">Data Operator</a>
-                  <a href="/admin/manajemen/peserta" className="block px-3 py-2 hover:text-white transition font-bold text-slate-200 bg-slate-800 rounded-md">Data Peserta</a>
+                  <a href="/admin/manajemen/peserta" className="block px-3 py-2 hover:text-white transition">Data Peserta</a>
                   <a href="#" className="block px-3 py-2 hover:text-white transition">Kelompok Peserta</a>
                   <a href="#" className="block px-3 py-2 hover:text-white transition">Data Ruang</a>
                   <a href="#" className="block px-3 py-2 hover:text-white transition">Konversi Skor</a>
@@ -115,7 +118,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               )}
             </div>
 
-            {/* 5. DROPDOWN: REKAP DATA */}
+            {/* 5. REKAP DATA */}
             <div>
               <button 
                 onClick={() => setIsRekapDataOpen(!isRekapDataOpen)}
@@ -139,11 +142,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 </div>
               )}
             </div>
-
           </nav>
         </div>
 
-        {/* Tombol Logout Samping */}
+        {/* Tombol Keluar Samping */}
         <button 
           onClick={handleLogout}
           className="w-full bg-slate-800 hover:bg-red-950 text-slate-400 hover:text-red-400 text-xs font-bold py-2 rounded-xl transition border border-slate-800/40 mt-4 shrink-0"
@@ -155,16 +157,51 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* KONTEN KANAN */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* TOPBAR */}
-        <header className="bg-white shadow-sm border-b border-slate-200/60 px-8 py-3.5 flex justify-between items-center sticky top-0 z-10">
+        <header className="bg-white shadow-sm border-b border-slate-200/60 px-8 py-3.5 flex justify-between items-center sticky top-0 z-50">
           <h2 className="font-bold text-base tracking-tight text-slate-700 uppercase">Sistem CBT Online - Backend Management</h2>
-          <div className="flex items-center gap-3">
-            <div className="text-right">
-              <p className="font-extrabold text-xs text-slate-800">Super Admin Pusat</p>
-              <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest">SUPER ADMIN</p>
-            </div>
-            <div className="w-8 h-8 bg-blue-100 text-blue-700 font-black text-xs flex items-center justify-center rounded-xl shadow-inner">
-              S
-            </div>
+          
+          {/* MENU PROFIL ADMIN KANAN ATAS */}
+          <div className="relative">
+            <button 
+              onClick={() => setIsAdminMenuOpen(!isAdminMenuOpen)}
+              className="flex items-center gap-3 hover:bg-slate-50 p-1.5 rounded-xl transition text-left focus:outline-none"
+            >
+              <div className="text-right hidden sm:block">
+                <p className="font-extrabold text-xs text-slate-800 flex items-center gap-1">
+                  Super Admin Pusat <span className="text-[9px] text-slate-400">{isAdminMenuOpen ? '▲' : '▼'}</span>
+                </p>
+                <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest">SUPER ADMIN</p>
+              </div>
+              <div className="w-8 h-8 bg-blue-100 text-blue-700 font-black text-xs flex items-center justify-center rounded-xl shadow-inner">
+                S
+              </div>
+            </button>
+
+            {/* DROPDOWN MENU KANAN ATAS */}
+            {isAdminMenuOpen && (
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-slate-200/80 py-1.5 z-50 animate-in fade-in slide-in-from-top-1 duration-150">
+                <div className="px-3.5 py-1.5 border-b border-slate-100 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                  Peran Masuk: Admin
+                </div>
+                
+                {/* Tombol Ubah Password */}
+                <a 
+                  href="#" 
+                  className="flex items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition"
+                  onClick={() => setIsAdminMenuOpen(false)}
+                >
+                  🔑 Ubah Password
+                </a>
+                
+                {/* Tombol Log Out */}
+                <button 
+                  onClick={handleLogout}
+                  className="w-full flex items-center gap-2.5 px-3.5 py-2 text-xs font-bold text-red-600 hover:bg-red-50 transition text-left"
+                >
+                  🚪 Log Out
+                </button>
+              </div>
+            )}
           </div>
         </header>
 
@@ -174,7 +211,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </main>
       </div>
 
-      {/* CSS internal mini untuk mempercantik scrollbar */}
+      {/* CSS internal mini untuk scrollbar */}
       <style jsx global>{`
         .custom-scrollbar::-webkit-scrollbar {
           width: 4px;
