@@ -1,133 +1,108 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { useState } from 'react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-  const [namaAdmin, setNamaAdmin] = useState('Administrator');
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
-
-  useEffect(() => {
-    // Mengambil nama admin dari localStorage jika ada
-    setNamaAdmin(localStorage.getItem('user_nama') || 'Admin Utama');
-  }, []);
+  const [isManajemenOpen, setIsManajemenOpen] = useState(true); // Default terbuka sesuai fokus kita
 
   const handleLogout = () => {
     localStorage.clear();
-    window.location.href = '/login';
+    window.location.href = '/admin-login';
   };
 
-  // Daftar Menu Sidebar sesuai referensi rancangan Backend CBT
-  const menuItems = [
-    { name: 'Dashboard', path: '/admin', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
-    { name: 'Master Data', path: '/admin/master', icon: 'M4 7v10c0 2.21 3.58 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.58 4 8 4s8-1.79 8-4M4 7c0-2.21 3.58-4 8-4s8 1.79 8 4m0 5c0 2.21-3.58 4-8 4s-8-1.79-8-4' },
-    { name: 'Bank Soal', path: '/admin/soal', icon: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253' },
-    { name: 'Jadwal Ujian', path: '/admin/ujian', icon: 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z' },
-    { name: 'Rekap Hasil Nilai', path: '/admin/nilai', icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' },
-  ];
-
   return (
-    <div className="flex h-screen bg-slate-100 font-sans antialiased overflow-hidden">
-      
-      {/* 1. SIDEBAR (Kiri) */}
-      <aside className="w-64 bg-slate-900 text-slate-300 flex flex-col justify-between shadow-xl z-20 flex-shrink-0">
+    <div className="min-h-screen bg-slate-100 flex font-sans antialiased text-slate-800">
+      {/* SIDEBAR LEFT */}
+      <aside className="w-64 bg-slate-900 text-slate-300 flex flex-col justify-between p-4 shadow-xl border-r border-slate-800 shrink-0 sticky top-0 h-screen overflow-y-auto">
         <div>
-          {/* Logo / Judul CBT */}
-          <div className="h-16 bg-slate-950 flex items-center px-6 border-b border-slate-800">
-            <span className="text-xl font-black text-white tracking-wider flex items-center space-x-2">
-              <span className="bg-blue-600 text-white p-1.5 rounded-lg text-xs font-mono">CBT</span>
-              <span>PANEL ADMIN</span>
-            </span>
+          {/* Logo Brand */}
+          <div className="flex items-center gap-3 mb-6 px-2 py-1">
+            <div className="bg-blue-600 p-2 rounded-xl font-black text-xs text-white tracking-wider shadow-md shadow-blue-500/20">CBT</div>
+            <span className="font-extrabold text-base text-white tracking-widest">PANEL ADMIN</span>
           </div>
+          
+          {/* Menu Navigation */}
+          <nav className="space-y-1.5 text-sm font-semibold">
+            <a href="/admin" className="flex items-center gap-3 px-3.5 py-2.5 hover:bg-slate-800 hover:text-white rounded-xl transition text-slate-400">
+              📊 Dashboard
+            </a>
 
-          {/* List Menu */}
-          <nav className="mt-6 px-4 space-y-1">
-            {menuItems.map((item) => {
-              const isActive = pathname === item.path;
-              return (
-                <Link
-                  key={item.name}
-                  href={item.path}
-                  className={`flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${
-                    isActive
-                      ? 'bg-blue-600 text-white shadow-md shadow-blue-600/20'
-                      : 'hover:bg-slate-800 hover:text-white'
-                  }`}
-                >
-                  <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
-                  </svg>
-                  <span>{item.name}</span>
-                </Link>
-              );
-            })}
+            {/* KELOMPOK MENU: MANAJEMEN DROPDOWN */}
+            <div>
+              <button 
+                onClick={() => setIsManajemenOpen(!isManajemenOpen)}
+                className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition text-left ${
+                  isManajemenOpen ? 'bg-slate-800/80 text-blue-400' : 'hover:bg-slate-800 hover:text-white text-slate-400'
+                }`}
+              >
+                <span className="flex items-center gap-3">📁 Manajemen</span>
+                <span className="text-xs transition-transform duration-200">{isManajemenOpen ? '▼' : '▶'}</span>
+              </button>
+
+              {/* SUB-MENU KASKADE (Sesuai Gambar Referensi Anda) */}
+              {isManajemenOpen && (
+                <div className="mt-1 pl-4 space-y-1 border-l border-slate-800 ml-5 text-xs text-slate-400 font-medium">
+                  <a href="#" className="block px-3 py-2 hover:text-white transition">Data Lembaga</a>
+                  <a href="#" className="block px-3 py-2 hover:text-white transition">Data Operator</a>
+                  {/* Menu Aktif yang Kita Bangun */}
+                  <a href="/admin/manajemen/peserta" className="block px-3 py-2 bg-blue-600/10 text-blue-400 rounded-lg font-bold transition">Data Peserta</a>
+                  <a href="#" className="block px-3 py-2 hover:text-white transition">Kelompok Peserta</a>
+                  <a href="#" className="block px-3 py-2 hover:text-white transition">Data Ruang</a>
+                  <a href="#" className="block px-3 py-2 hover:text-white transition">Konversi Skor</a>
+                  <a href="#" className="block px-3 py-2 hover:text-white transition">Email System</a>
+                  <a href="#" className="block px-3 py-2 hover:text-white transition">Artikel</a>
+                  <a href="#" className="block px-3 py-2 hover:text-white transition">Template Email</a>
+                  <a href="#" className="block px-3 py-2 hover:text-white transition">Modul</a>
+                  <a href="#" className="block px-3 py-2 hover:text-white transition">Pengawasan Ruang</a>
+                  <a href="#" className="block px-3 py-2 hover:text-white transition">Grup Sesi</a>
+                  <a href="#" className="block px-3 py-2 hover:text-white transition">Antrian Broadcast WA</a>
+                  <a href="#" className="block px-3 py-2 hover:text-white transition">Histori Token AI</a>
+                  <a href="#" className="block px-3 py-2 hover:text-white transition">Rangking Peserta</a>
+                </div>
+              )}
+            </div>
+
+            <a href="#" className="flex items-center gap-3 px-3.5 py-2.5 hover:bg-slate-800 hover:text-white rounded-xl transition text-slate-400">
+              📝 Bank Soal
+            </a>
+            <a href="#" className="flex items-center gap-3 px-3.5 py-2.5 hover:bg-slate-800 hover:text-white rounded-xl transition text-slate-400">
+              📅 Jadwal Ujian
+            </a>
+            <a href="#" className="flex items-center gap-3 px-3.5 py-2.5 hover:bg-slate-800 hover:text-white rounded-xl transition text-slate-400">
+              📊 Rekap Hasil Nilai
+            </a>
           </nav>
         </div>
 
-        {/* Info Footer Sidebar */}
-        <div className="p-4 border-t border-slate-800 bg-slate-950/50 text-center text-xs text-slate-500 font-medium">
-          Dashboard Backend v1.0
-        </div>
+        {/* Tombol Logout Samping */}
+        <button 
+          onClick={handleLogout}
+          className="w-full bg-slate-800 hover:bg-red-950 text-slate-400 hover:text-red-400 text-xs font-bold py-2 rounded-xl transition border border-slate-800/40"
+        >
+          Keluar Admin
+        </button>
       </aside>
 
-      {/* AREA KANAN (Header + Konten Utama) */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        
-        {/* 2. HEADER (Atas) */}
-        <header className="h-16 bg-white border-b border-gray-200 shadow-sm flex items-center justify-between px-8 z-10 flex-shrink-0">
-          
-          {/* Judul Halaman Dinamis */}
-          <div className="flex items-center space-x-2">
-            <h2 className="text-md font-black text-gray-800 tracking-tight uppercase">
-              {menuItems.find(item => item.path === pathname)?.name || 'Panel Utama'}
-            </h2>
-          </div>
-
-          {/* Menu Profil Kanan */}
-          <div className="relative">
-            <button 
-              onClick={() => setIsProfileOpen(!isProfileOpen)}
-              className="flex items-center space-x-3 focus:outline-none hover:bg-gray-50 p-2 rounded-xl transition"
-            >
-              <div className="w-8 h-8 rounded-full bg-blue-100 border border-blue-200 flex items-center justify-between justify-center font-bold text-blue-700 text-xs">
-                {namaAdmin.charAt(0).toUpperCase()}
-              </div>
-              <div className="text-left hidden md:block">
-                <p className="text-xs font-black text-gray-800 leading-none">{namaAdmin}</p>
-                <p className="text-[10px] font-bold text-blue-600 uppercase mt-0.5 tracking-tight">Super Admin</p>
-              </div>
-              <svg className={`w-4 h-4 text-gray-400 transition-transform ${isProfileOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-
-            {/* Dropdown Menu Logout */}
-            {isProfileOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-100 rounded-xl shadow-xl py-1 z-30 animate-in fade-in slide-in-from-top-2 duration-150">
-                <div className="px-4 py-2 border-b border-gray-100 text-xs text-gray-400 font-bold uppercase">
-                  Aksi Akun
-                </div>
-                <button
-                  onClick={handleLogout}
-                  className="w-full text-left px-4 py-2.5 text-sm font-bold text-red-600 hover:bg-red-50 flex items-center space-x-2 transition"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                  </svg>
-                  <span>Keluar Sistem</span>
-                </button>
-              </div>
-            )}
+      {/* KONTEN KANAN */}
+      <div className="flex-1 flex flex-col min-w-0">
+        {/* TOPBAR */}
+        <header className="bg-white shadow-sm border-b border-slate-200/60 px-8 py-3.5 flex justify-between items-center sticky top-0 z-10">
+          <h2 className="font-bold text-base tracking-tight text-slate-700 uppercase">Sistem CBT Online - Backend Management</h2>
+          <div className="flex items-center gap-3">
+            <div className="text-right">
+              <p className="font-extrabold text-xs text-slate-800">Super Admin Pusat</p>
+              <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest">SUPER ADMIN</p>
+            </div>
+            <div className="w-8 h-8 bg-blue-100 text-blue-700 font-black text-xs flex items-center justify-center rounded-xl shadow-inner">
+              S
+            </div>
           </div>
         </header>
 
-        {/* 3. KONTEN UTAMA (Bawah Header) */}
-        <main className="flex-1 overflow-y-auto bg-slate-50 p-8">
+        {/* AREA HALAMAN UTAMA */}
+        <main className="flex-1">
           {children}
         </main>
-
       </div>
     </div>
   );
