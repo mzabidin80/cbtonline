@@ -35,32 +35,34 @@ export default function PengawasLoginPage() {
         throw new Error('Akses Ditolak! Akun Anda tidak terdaftar sebagai Pengawas.');
       }
 
-      localStorage.setItem('user_nama', data.nama_lengkap);
+      // 🚀 INI KUNCI JAWABANNYA: Menyimpan SEMUA data ke memori browser
+      localStorage.setItem('user_nama', data.nama_lengkap || data.nama || 'Pengawas');
       localStorage.setItem('user_role', data.role);
+      localStorage.setItem('user_username', data.username); // <--- ID SEKARANG TERSIMPAN!
       
       // Alihkan langsung ke dashboard khusus pengawas
       window.location.href = '/pengawas';
       
     } catch (err: any) {
-      setErrorMsg(err.message);
+      setErrorMsg(err.message || 'Terjadi kesalahan saat login.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-indigo-950 p-4">
-      <title>Login Pengawas - CBT Online</title>
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
+      <title>Login Pengawas - CBT</title>
 
-      <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-xl border border-indigo-100">
-        <div className="text-center mb-8">
-          <h1 className="text-2xl font-black text-slate-800 tracking-tight">Portal Pengawas CBT</h1>
-          <p className="text-sm text-slate-500 mt-2 font-medium">Silakan masuk menggunakan akun Pengawas Anda.</p>
+      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-2xl shadow-xl border border-slate-100">
+        <div className="text-center">
+          <h2 className="text-3xl font-extrabold text-slate-900">Portal Pengawas</h2>
+          <p className="mt-2 text-sm text-slate-500">Sistem CBT Online</p>
         </div>
 
         {errorMsg && (
-          <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm font-semibold text-center mb-6 border border-red-200">
-            {errorMsg}
+          <div className="bg-red-50 p-4 text-sm text-red-700 rounded-xl font-medium">
+            ⚠️ {errorMsg}
           </div>
         )}
 
@@ -94,7 +96,7 @@ export default function PengawasLoginPage() {
             disabled={loading}
             className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl transition shadow-lg disabled:opacity-50 mt-4"
           >
-            {loading ? 'Memverifikasi...' : 'Masuk Portal Pengawas'}
+            {loading ? 'Memverifikasi...' : 'Masuk Panel Pengawas'}
           </button>
         </form>
       </div>
