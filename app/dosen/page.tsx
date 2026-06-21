@@ -9,8 +9,8 @@ export default function DosenDashboard() {
     const nama = localStorage.getItem('user_nama');
     const role = localStorage.getItem('user_role');
 
-    // Izinkan masuk jika rolenya dosen atau pengawas
-    if (!nama || (role !== 'dosen' && role !== 'pengawas')) {
+    // PERBAIKAN: Proteksi ketat, hanya role 'dosen' yang diizinkan masuk ke portal ini
+    if (!nama || role !== 'dosen') {
       window.location.href = '/dosen-login';
     } else {
       setNamaDosen(nama);
@@ -38,11 +38,12 @@ export default function DosenDashboard() {
             <a href="#" className="flex items-center gap-3 px-4 py-3 bg-emerald-800 rounded-xl font-medium">
               📊 Dashboard
             </a>
+            {/* PERBAIKAN: Menyesuaikan fungsionalitas pengajar/dosen */}
             <a href="#" className="flex items-center gap-3 px-4 py-3 hover:bg-emerald-800/50 rounded-xl transition text-slate-300 hover:text-white">
-              📅 Jadwal Mengawas Ujian
+              📅 Jadwal Kuliah & Ujian
             </a>
             <a href="#" className="flex items-center gap-3 px-4 py-3 hover:bg-emerald-800/50 rounded-xl transition text-slate-300 hover:text-white">
-              👥 Rekap Nilai Mahasiswa
+              📊 Rekap Nilai Mahasiswa
             </a>
             <a href="#" className="flex items-center gap-3 px-4 py-3 hover:bg-emerald-800/50 rounded-xl transition text-slate-300 hover:text-white">
               ⚠️ Laporan Kasus Ujian
@@ -66,7 +67,8 @@ export default function DosenDashboard() {
           <div className="flex items-center gap-3">
             <div className="text-right">
               <p className="font-bold text-sm text-slate-800">{namaDosen}</p>
-              <p className="text-xs font-semibold text-emerald-600 uppercase tracking-wider">Dosen / Pengawas</p>
+              {/* PERBAIKAN: Mengubah sub-teks dari "Dosen / Pengawas" menjadi murni "Dosen" */}
+              <p className="text-xs font-semibold text-emerald-600 uppercase tracking-wider">Dosen</p>
             </div>
             <div className="w-10 h-10 bg-emerald-200 text-emerald-800 font-bold flex items-center justify-center rounded-full shadow-inner">
               {namaDosen.charAt(0)}
@@ -78,6 +80,7 @@ export default function DosenDashboard() {
         <main className="p-8 flex-1 space-y-6">
           {/* BANNER SELAMAT DATANG */}
           <div className="bg-gradient-to-r from-emerald-700 to-teal-600 text-white p-6 rounded-2xl shadow-md">
+            {/* PERBAIKAN: Sapaan dinamis tanpa embel-embel teks statis pengawas */}
             <h3 className="text-2xl font-black">Selamat Datang, {namaDosen}! 👋</h3>
             <p className="text-sm text-emerald-100 mt-1">
               Selamat datang di ruang kendali Dosen. Monitor presensi kehadiran mahasiswa secara real-time dan rekap perolehan nilai ujian di sini.
