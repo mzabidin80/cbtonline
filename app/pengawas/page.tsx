@@ -6,8 +6,11 @@ export default function PengawasDashboard() {
   const [namaPengawas, setNamaPengawas] = useState('Pengawas');
 
   useEffect(() => {
-    const nama = localStorage.getItem('user_nama');
-    if (nama) setNamaPengawas(nama);
+    // 🔍 PENYELARASAN: Mengambil data nama dengan multi-key fallback agar selalu sinkron dengan layout
+    const nama = localStorage.getItem('user_nama') || localStorage.getItem('pengawas_nama') || localStorage.getItem('nama');
+    if (nama) {
+      setNamaPengawas(nama);
+    }
   }, []);
 
   return (

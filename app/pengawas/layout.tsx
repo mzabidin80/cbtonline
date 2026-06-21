@@ -24,19 +24,19 @@ export default function PengawasDashboardLayout({ children }: { children: React.
     const storedNama = localStorage.getItem('user_nama') || localStorage.getItem('pengawas_nama') || localStorage.getItem('nama');
     const role = localStorage.getItem('user_role');
 
-    // Proteksi Keamanan Halaman
+    // Proteksi Keamanan Halaman Pengawas
     if (!storedNama || role !== 'pengawas') {
       window.location.href = '/pengawas-login';
       return;
     }
 
-    if (storedNama) setNamaPengawas(storedNama);
+    setNamaPengawas(storedNama);
 
-    // 🔍 SULUSI "TIDAK TERDETEKSI": Mencari segala kemungkinan key username yang disimpan memori browser
+    // 🔍 SOLUSI "TIDAK TERDETEKSI": Mencari segala kemungkinan key username pengawas di memori browser
     const detectUsername = 
       localStorage.getItem('user_username') || 
-      localStorage.getItem('pengawas_username') || 
       localStorage.getItem('username') || 
+      localStorage.getItem('pengawas_username') || 
       localStorage.getItem('user_id') ||
       localStorage.getItem('id');
 
@@ -55,7 +55,7 @@ export default function PengawasDashboardLayout({ children }: { children: React.
     setPesanError('');
 
     if (!usernamePengawas) {
-      setPesanError('Sesi tidak ditemukan atau ID kosong. Silakan login kembali.');
+      setPesanError('Sesi tidak ditemukan atau ID kosong. Silakan masuk kembali.');
       return;
     }
 
@@ -71,7 +71,7 @@ export default function PengawasDashboardLayout({ children }: { children: React.
 
     setLoading(true);
     try {
-      // 🎯 Mengincar tabel user_pengawas di database Supabase Anda
+      // 🎯 UPDATE AKURAT: Mengubah password khusus di tabel user_pengawas Supabase Anda
       const { data, error } = await supabase
         .from('user_pengawas')
         .update({ password: passwordBaru })
@@ -86,13 +86,13 @@ export default function PengawasDashboardLayout({ children }: { children: React.
         return;
       }
 
-      alert('Sandi Pengawas BERHASIL diperbarui di database Supabase!');
+      alert('Password Pengawas BERHASIL diperbarui di database!');
       setIsModalPasswordOpen(false);
       setPasswordBaru('');
       setKonfirmasiPassword('');
     } catch (err: any) {
       console.error(err);
-      setPesanError('Gagal mengubah sandi: ' + err.message);
+      setPesanError('Gagal mengubah password: ' + err.message);
     } finally {
       setLoading(false);
     }
@@ -151,7 +151,7 @@ export default function PengawasDashboardLayout({ children }: { children: React.
                   {namaPengawas} <span className="text-[10px] text-slate-400">{isMenuOpen ? '▲' : '▼'}</span>
                 </p>
                 <p className="text-xs font-semibold text-indigo-600 uppercase tracking-wider">
-                  ID: {usernamePengawas || 'PENGAWAS'}
+                  ID: {usernamePengawas || 'TIDAK TERDETEKSI'}
                 </p>
               </div>
               <div className="w-10 h-10 bg-indigo-100 text-indigo-800 font-bold flex items-center justify-center rounded-xl shadow-sm uppercase">
