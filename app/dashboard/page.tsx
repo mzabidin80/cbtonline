@@ -35,6 +35,7 @@ export default function DashboardPage() {
   // Fungsi memproses pembaruan password di Supabase tabel users_cbt
   const handleUpdatePassword = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!passwordBaru || !konfirmasiPassword) {
       alert('Semua kolom password wajib diisi.');
       return;
@@ -46,14 +47,23 @@ export default function DashboardPage() {
 
     setLoadingPassword(true);
     try {
-      const { error } = await supabase
+      // Kita ubah pencariannya menggunakan .eq('nama_lengkap', namaMhs) 
+      // Karena namaMhs terbukti sudah sukses terbaca sebagai "Budi Santoso (Mahasiswa)"
+      const { data, error } = await supabase
         .from('users_cbt')
         .update({ password: passwordBaru })
-        .eq('username', username);
+        .eq('nama_lengkap', namaMhs)
+        .select(); 
 
       if (error) throw error;
 
-      alert('Password berhasil diperbarui!');
+      // Proteksi mendeteksi jika baris di Supabase tidak ada yang berubah
+      if (!data || data.length === 0) {
+        alert(`Gagal merubah! Nama akun "${namaMhs}" tidak ditemukan di database Supabase.`);
+        return;
+      }
+
+      alert('Sandi Berhasil Diperbarui! Password baru Anda kini sudah tersimpan langsung di database Supabase.');
       setIsModalOpen(false);
       setPasswordBaru('');
       setKonfirmasiPassword('');
