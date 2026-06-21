@@ -7,30 +7,52 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export async function POST(request: Request) {
   try {
-    const { username, passwordBaru } = await request.json();
+    const { username, password } = await request.json();
 
-    if (!username || !passwordBaru) {
+    if (!username || !password) {
       return NextResponse.json(
-        { message: 'Username dan password baru wajib diisi.' },
+        { message: 'Username dan password wajib diisi.' },
         { status: 400 }
       );
     }
 
-    // UPDATE DATA SEKARANG LANGSUNG KE TABEL user_admin
-    const { error } = await supabase
-      .from('user_admin') 
-      .update({ password: passwordBaru })
-      .eq('username', username);
+    // 🔍 SEKARANG PERIKSA LANGSUNG KE TABEL user_admin
+    const { data: admin, error } = await supabase
+      .from('user_admin')
+      .select('*')
+      .eq('username', username)
+      .single();
 
-    if (error) throw error;
+    // Jika username tidak ditemukan atau terjadi error di Supabase
+    if (error || !admin) {
+      return NextResponse.json(
+        { message: 'Username atau Password Admin salah!' },
+        { status: 401 }
+      );
+    }
 
-    return NextResponse.json(
-      { message: 'Password admin berhasil diperbarui di database Supabase.' },
-      { status: 200 }
-    );
+    // Pengecekan kecocokan password
+    // Catatan: Jika Anda menggunakan enkripsi (seperti bcrypt), gunakan compare() di sini.
+    if (admin.password !== password) {
+      return NextResponse.json(
+        { message: 'Username atau Password Admin salah!' },
+        { status: 401 }
+      );
+    }
+
+    // Jika sukses, kembalikan data admin beserta token/role
+    return NextResponse.json({
+      message: 'Login Berhasil',
+      user: {
+        username: admin.username,
+        nama: admin.nama_lengkap,
+        role: 'admin' // Tetap set sebagai admin untuk kebutuhan localStorage di frontend
+      }
+    }, { status: 200 });
+
   } catch (error: any) {
     return NextResponse.json(
-      { message: error.message || 'Terjadi kesalahan pada server.' },
+      { message: error.message || 'Terjadi kesalahan sistem backend.' },
       { status: 500 }
     );
   }
