@@ -4,9 +4,10 @@ import { useState } from 'react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   // State untuk mengontrol buka-tutup dropdown menu sidebar
+  const [isDataUserOpen, setIsDataUserOpen] = useState(true); // Default terbuka untuk melihat hasil perubahan
   const [isUjianOnlineOpen, setIsUjianOnlineOpen] = useState(false);
   const [isManajemenOpen, setIsManajemenOpen] = useState(false);
-  const [isRekapDataOpen, setIsRekapDataOpen] = useState(true); // Default terbuka sesuai fokus pembaruan kita
+  const [isRekapDataOpen, setIsRekapDataOpen] = useState(false);
 
   const handleLogout = () => {
     localStorage.clear();
@@ -31,7 +32,29 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               📊 Dashboard
             </a>
 
-            {/* 2. DROPDOWN: UJIAN ONLINE */}
+            {/* 2. DROPDOWN BARU: DATA USER */}
+            <div>
+              <button 
+                onClick={() => setIsDataUserOpen(!isDataUserOpen)}
+                className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition text-left ${
+                  isDataUserOpen ? 'bg-slate-800/80 text-blue-400' : 'hover:bg-slate-800 hover:text-white text-slate-400'
+                }`}
+              >
+                <span className="flex items-center gap-3">👤 Data User</span>
+                <span className="text-xs transition-transform duration-200">{isDataUserOpen ? '▼' : '▶'}</span>
+              </button>
+
+              {/* SUB-MENU DATA USER */}
+              {isDataUserOpen && (
+                <div className="mt-1 pl-4 space-y-1 border-l border-slate-800 ml-5 text-xs text-slate-400 font-medium">
+                  <a href="#" className="block px-3 py-2 hover:text-white transition">Data User Admin</a>
+                  <a href="#" className="block px-3 py-2 hover:text-white transition">Data Dosen</a>
+                  <a href="#" className="block px-3 py-2 hover:text-white transition">Data Pengawas</a>
+                </div>
+              )}
+            </div>
+
+            {/* 3. DROPDOWN: UJIAN ONLINE */}
             <div>
               <button 
                 onClick={() => setIsUjianOnlineOpen(!isUjianOnlineOpen)}
@@ -58,7 +81,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               )}
             </div>
 
-            {/* 3. DROPDOWN: MANAJEMEN */}
+            {/* 4. DROPDOWN: MANAJEMEN */}
             <div>
               <button 
                 onClick={() => setIsManajemenOpen(!isManajemenOpen)}
@@ -70,12 +93,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <span className="text-xs transition-transform duration-200">{isManajemenOpen ? '▼' : '▶'}</span>
               </button>
 
-              {/* SUB-MENU MANAJEMEN */}
+              {/* SUB-MENU MANAJEMEN (Data Peserta tetap berada di sini) */}
               {isManajemenOpen && (
                 <div className="mt-1 pl-4 space-y-1 border-l border-slate-800 ml-5 text-xs text-slate-400 font-medium">
                   <a href="#" className="block px-3 py-2 hover:text-white transition">Data Lembaga</a>
                   <a href="#" className="block px-3 py-2 hover:text-white transition">Data Operator</a>
-                  <a href="/admin/manajemen/peserta" className="block px-3 py-2 hover:text-white transition">Data Peserta</a>
+                  <a href="/admin/manajemen/peserta" className="block px-3 py-2 hover:text-white transition font-bold text-slate-200 bg-slate-800 rounded-md">Data Peserta</a>
                   <a href="#" className="block px-3 py-2 hover:text-white transition">Kelompok Peserta</a>
                   <a href="#" className="block px-3 py-2 hover:text-white transition">Data Ruang</a>
                   <a href="#" className="block px-3 py-2 hover:text-white transition">Konversi Skor</a>
@@ -92,7 +115,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               )}
             </div>
 
-            {/* 4. DROPDOWN BARU: REKAP DATA (Pembaruan dari Rekap Hasil Nilai) */}
+            {/* 5. DROPDOWN: REKAP DATA */}
             <div>
               <button 
                 onClick={() => setIsRekapDataOpen(!isRekapDataOpen)}
@@ -104,7 +127,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <span className="text-xs transition-transform duration-200">{isRekapDataOpen ? '▼' : '▶'}</span>
               </button>
 
-              {/* SUB-MENU REKAP DATA (Rekap Generator Telah Dihapus) */}
+              {/* SUB-MENU REKAP DATA */}
               {isRekapDataOpen && (
                 <div className="mt-1 pl-4 space-y-1 border-l border-slate-800 ml-5 text-xs text-slate-400 font-medium">
                   <a href="#" className="block px-3 py-2 hover:text-white transition">Rekap Jadwal Ujian</a>
