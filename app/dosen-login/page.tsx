@@ -20,7 +20,7 @@ export default function DosenLoginPage() {
 
     try {
       const { data, error } = await supabase
-        .from('users_cbt')
+        .from('user_dosen')
         .select('*')
         .eq('username', username)
         .eq('password', password)

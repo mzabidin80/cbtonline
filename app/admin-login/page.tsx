@@ -23,7 +23,7 @@ export default function AdminLoginPage() {
     try {
       // Memeriksa data pengguna di database
       const { data, error } = await supabase
-        .from('users_cbt')
+        .from('user_admin')
         .select('*')
         .eq('username', username)
         .eq('password', password)

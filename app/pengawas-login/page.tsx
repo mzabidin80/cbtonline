@@ -20,7 +20,7 @@ export default function PengawasLoginPage() {
 
     try {
       const { data, error } = await supabase
-        .from('users_cbt')
+        .from('user_pengawas')
         .select('*')
         .eq('username', username)
         .eq('password', password)
