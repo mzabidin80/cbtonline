@@ -177,31 +177,31 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               </div>
             </button>
 
-            {/* DROPDOWN MENU KANAN ATAS */}
-            {isAdminMenuOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-slate-200/80 py-1.5 z-50 animate-in fade-in slide-in-from-top-1 duration-150">
-                <div className="px-3.5 py-1.5 border-b border-slate-100 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                  Peran Masuk: Admin
-                </div>
-                
-                {/* Tombol Ubah Password */}
-                <a 
-                  href="#" 
-                  className="flex items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition"
-                  onClick={() => setIsAdminMenuOpen(false)}
-                >
-                  🔑 Ubah Password
-                </a>
-                
-                {/* Tombol Log Out */}
-                <button 
-                  onClick={handleLogout}
-                  className="w-full flex items-center gap-2.5 px-3.5 py-2 text-xs font-bold text-red-600 hover:bg-red-50 transition text-left"
-                >
-                  🚪 Log Out
-                </button>
-              </div>
-            )}
+           {/* DROPDOWN MENU KANAN ATAS */}
+{isAdminMenuOpen && (
+  <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-slate-200/80 py-1.5 z-50 animate-in fade-in slide-in-from-top-1 duration-150">
+    <div className="px-3.5 py-1.5 border-b border-slate-100 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+      Peran Masuk: Admin
+    </div>
+    
+    {/* Tombol Ubah Password - SEKARANG DIARAHKAN KE RUTE /admin/ubah-password */}
+    <a 
+      href="/admin/ubah-password" 
+      className="flex items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition"
+      onClick={() => setIsAdminMenuOpen(false)}
+    >
+      🔑 Ubah Password
+    </a>
+    
+    {/* Tombol Log Out */}
+    <button 
+      onClick={handleLogout}
+      className="w-full flex items-center gap-2.5 px-3.5 py-2 text-xs font-bold text-red-600 hover:bg-red-50 transition text-left"
+    >
+      🚪 Log Out
+    </button>
+  </div>
+)}
           </div>
         </header>
 
