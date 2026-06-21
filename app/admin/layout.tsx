@@ -4,8 +4,9 @@ import { useState } from 'react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   // State untuk mengontrol buka-tutup dropdown menu sidebar
-  const [isUjianOnlineOpen, setIsUjianOnlineOpen] = useState(true); // Default terbuka
+  const [isUjianOnlineOpen, setIsUjianOnlineOpen] = useState(false);
   const [isManajemenOpen, setIsManajemenOpen] = useState(false);
+  const [isRekapDataOpen, setIsRekapDataOpen] = useState(true); // Default terbuka sesuai fokus pembaruan kita
 
   const handleLogout = () => {
     localStorage.clear();
@@ -42,7 +43,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <span className="text-xs transition-transform duration-200">{isUjianOnlineOpen ? '▼' : '▶'}</span>
               </button>
 
-              {/* SUB-MENU UJIAN ONLINE (Sesuai Gambar Referensi) */}
+              {/* SUB-MENU UJIAN ONLINE */}
               {isUjianOnlineOpen && (
                 <div className="mt-1 pl-4 space-y-1 border-l border-slate-800 ml-5 text-xs text-slate-400 font-medium">
                   <a href="#" className="block px-3 py-2 hover:text-white transition">Kategori Materi</a>
@@ -91,10 +92,31 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               )}
             </div>
 
-            {/* MENU LAINNYA */}
-            <a href="#" className="flex items-center gap-3 px-3.5 py-2.5 hover:bg-slate-800 hover:text-white rounded-xl transition text-slate-400">
-              📊 Rekap Hasil Nilai
-            </a>
+            {/* 4. DROPDOWN BARU: REKAP DATA (Pembaruan dari Rekap Hasil Nilai) */}
+            <div>
+              <button 
+                onClick={() => setIsRekapDataOpen(!isRekapDataOpen)}
+                className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition text-left ${
+                  isRekapDataOpen ? 'bg-slate-800/80 text-blue-400' : 'hover:bg-slate-800 hover:text-white text-slate-400'
+                }`}
+              >
+                <span className="flex items-center gap-3">📉 Rekap Data</span>
+                <span className="text-xs transition-transform duration-200">{isRekapDataOpen ? '▼' : '▶'}</span>
+              </button>
+
+              {/* SUB-MENU REKAP DATA (Rekap Generator Telah Dihapus) */}
+              {isRekapDataOpen && (
+                <div className="mt-1 pl-4 space-y-1 border-l border-slate-800 ml-5 text-xs text-slate-400 font-medium">
+                  <a href="#" className="block px-3 py-2 hover:text-white transition">Rekap Jadwal Ujian</a>
+                  <a href="#" className="block px-3 py-2 hover:text-white transition">Rekap Peserta</a>
+                  <a href="#" className="block px-3 py-2 hover:text-white transition">Rekap Jumlah Peserta</a>
+                  <a href="#" className="block px-3 py-2 hover:text-white transition">Laporan Kasus</a>
+                  <a href="#" className="block px-3 py-2 hover:text-white transition">Operator Lapangan</a>
+                  <a href="#" className="block px-3 py-2 hover:text-white transition">Pengawas Lapangan</a>
+                </div>
+              )}
+            </div>
+
           </nav>
         </div>
 
@@ -129,7 +151,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </main>
       </div>
 
-      {/* CSS internal mini untuk mempercantik scrollbar jika menu terlalu panjang */}
+      {/* CSS internal mini untuk mempercantik scrollbar */}
       <style jsx global>{`
         .custom-scrollbar::-webkit-scrollbar {
           width: 4px;
