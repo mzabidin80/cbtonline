@@ -20,29 +20,22 @@ export default function PengawasDashboardLayout({ children }: { children: React.
   const [pesanError, setPesanError] = useState('');
 
   useEffect(() => {
-    // Sinkronisasi data nama login pengawas
+    // Sinkronisasi data dari browser
     const storedNama = localStorage.getItem('user_nama') || localStorage.getItem('pengawas_nama') || localStorage.getItem('nama');
     const role = localStorage.getItem('user_role');
+    const detectUsername = localStorage.getItem('user_username') || localStorage.getItem('username') || localStorage.getItem('pengawas_username');
 
-    // Proteksi Keamanan Halaman Pengawas
-    if (!storedNama || role !== 'pengawas') {
+    // 🔥 SISTEM KICK OTOMATIS BERSIHKAN CACHE
+    // Jika tidak ada nama, role salah, ATAU ID TIDAK DITEMUKAN -> Langsung hapus memori & paksa login ulang!
+    if (!storedNama || role !== 'pengawas' || !detectUsername) {
+      localStorage.clear();
       window.location.href = '/pengawas-login';
       return;
     }
 
+    // Jika aman, tampilkan datanya
     setNamaPengawas(storedNama);
-
-    // 🔍 SOLUSI "TIDAK TERDETEKSI": Mencari segala kemungkinan key username pengawas di memori browser
-    const detectUsername = 
-      localStorage.getItem('user_username') || 
-      localStorage.getItem('username') || 
-      localStorage.getItem('pengawas_username') || 
-      localStorage.getItem('user_id') ||
-      localStorage.getItem('id');
-
-    if (detectUsername) {
-      setUsernamePengawas(detectUsername);
-    }
+    setUsernamePengawas(detectUsername);
   }, []);
 
   const handleLogout = () => {
@@ -71,7 +64,6 @@ export default function PengawasDashboardLayout({ children }: { children: React.
 
     setLoading(true);
     try {
-      // 🎯 UPDATE AKURAT: Mengubah password khusus di tabel user_pengawas Supabase Anda
       const { data, error } = await supabase
         .from('user_pengawas')
         .update({ password: passwordBaru })

@@ -20,7 +20,7 @@ export default function PengawasLoginPage() {
     setErrorMsg('');
 
     try {
-      // 🎯 Mengambil data dari tabel user_pengawas berdasarkan input
+      // 🎯 Mengambil data dari tabel user_pengawas
       const { data, error } = await supabase
         .from('user_pengawas')
         .select('*')
@@ -29,24 +29,23 @@ export default function PengawasLoginPage() {
         .single();
 
       if (error || !data) {
-        setErrorMsg('Username atau kata sandi Pengawas tidak sesuai!');
+        setErrorMsg('ID atau kata sandi Pengawas salah!');
         setLoading(false);
         return;
       }
 
-      // Ambil nama lengkap dari database (default 'Pengawas' jika kosong)
-      const namaLengkap = data.nama_lengkap || data.username || 'Pengawas';
+      const namaLengkap = data.nama_lengkap || data.nama || 'Pengawas MZA';
 
-      // 🚀 INI KUNCI PERBAIKANNYA: Menyimpan semua data ke memori browser (LocalStorage)
+      // 🚀 INI KUNCI UTAMANYA: Menyimpan "KTP" Pengawas ke browser!
       localStorage.setItem('user_nama', String(namaLengkap));
-      localStorage.setItem('user_username', String(data.username)); // <- Menyimpan ID 'pengawas1'
+      localStorage.setItem('user_username', String(data.username)); // <--- BIKIN ID MUNCUL
       localStorage.setItem('user_role', 'pengawas');
 
-      // Arahkan ke halaman Dashboard Pengawas
+      // Arahkan ke Dashboard
       window.location.href = '/pengawas';
 
     } catch (err) {
-      setErrorMsg('Terjadi kesalahan koneksi ke server database.');
+      setErrorMsg('Gagal terhubung ke database.');
     } finally {
       setLoading(false);
     }
@@ -84,7 +83,7 @@ export default function PengawasLoginPage() {
                 required
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="block w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+                className="block w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-900 focus:ring-2 focus:ring-indigo-500 outline-none transition"
                 placeholder="Masukkan ID Pengawas"
               />
             </div>
@@ -96,7 +95,7 @@ export default function PengawasLoginPage() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="block w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+                className="block w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-900 focus:ring-2 focus:ring-indigo-500 outline-none transition"
                 placeholder="••••••••"
               />
             </div>
@@ -106,7 +105,7 @@ export default function PengawasLoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex justify-center py-3.5 px-4 text-sm font-bold rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 transition shadow-lg disabled:opacity-50 mt-2"
+              className="w-full flex justify-center py-3.5 px-4 text-sm font-bold rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 transition shadow-lg mt-2"
             >
               {loading ? 'Memverifikasi...' : 'Masuk Panel Pengawas'}
             </button>
