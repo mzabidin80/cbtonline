@@ -1,6 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { createClient } from '@supabase/supabase-js';
+
+// Konfigurasi Inisialisasi Supabase Client
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   // State untuk dropdown menu sidebar
@@ -49,27 +55,21 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
     setLoading(true);
     try {
-      // Simulasi atau integrasi API kirim ke backend/supabase Anda
-      const response = await fetch('/api/admin/ubah-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: usernameAdmin, passwordBaru })
-      });
+      // PROSES ASLI: Eksekusi update langsung ke tabel user_admin di database Supabase Anda
+      const { data, error } = await supabase
+        .from('user_admin')
+        .update({ password: passwordBaru })
+        .eq('username', usernameAdmin);
 
-      if (!response.ok) {
-        throw new Error('Gagal memperbarui kata sandi.');
-      }
+      if (error) throw error;
 
-      alert('Sandi berhasil diperbarui!');
+      alert('Sandi BERHASIL diperbarui di database Supabase asli!');
       setIsModalPasswordOpen(false);
       setPasswordBaru('');
       setKonfirmasiPassword('');
     } catch (err: any) {
-      // Jika API belum siap, berikan alert sukses simulasi agar tidak macet di frontend
-      alert('Sandi berhasil diperbarui! (Simulasi Frontend)');
-      setIsModalPasswordOpen(false);
-      setPasswordBaru('');
-      setKonfirmasiPassword('');
+      console.error(err);
+      setPesanError('Gagal mengubah sandi database: ' + err.message);
     } finally {
       setLoading(false);
     }
