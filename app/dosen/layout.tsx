@@ -21,12 +21,16 @@ export default function DosenDashboardLayout({ children }: { children: React.Rea
   const [pesanError, setPesanError] = useState('');
 
   useEffect(() => {
-    // 🔍 PERBAIKAN 1: Membaca multi-opsi kunci localStorage yang mungkin digunakan oleh sistem login dosen Anda
-    const storedUsername = localStorage.getItem('user_username') || localStorage.getItem('username') || localStorage.getItem('dosen_username');
-    const storedNama = localStorage.getItem('user_nama') || localStorage.getItem('nama_lengkap') || localStorage.getItem('dosen_nama');
+    // 🔍 PERBAIKAN UTAMA: Memeriksa semua kemungkinan KEY localStorage yang digunakan oleh sistem login dosen Anda
+    const storedUsername = localStorage.getItem('user_username') || localStorage.getItem('username') || localStorage.getItem('dosen_username') || localStorage.getItem('nidn');
+    const storedNama = localStorage.getItem('user_nama') || localStorage.getItem('nama_lengkap') || localStorage.getItem('nama') || localStorage.getItem('dosen_nama');
     
-    if (storedUsername) setUsernameDosen(storedUsername);
-    if (storedNama) setNamaDosen(storedNama);
+    if (storedUsername) {
+      setUsernameDosen(storedUsername);
+    }
+    if (storedNama) {
+      setNamaDosen(storedNama);
+    }
   }, []);
 
   const handleLogout = () => {
@@ -38,9 +42,8 @@ export default function DosenDashboardLayout({ children }: { children: React.Rea
     e.preventDefault();
     setPesanError('');
 
-    // Validasi input username lokal terlebih dahulu
     if (!usernameDosen) {
-      setPesanError('Sesi login tidak terdeteksi di browser. Silakan log out dan login kembali.');
+      setPesanError('Sesi username dosen kosong. Silakan logout lalu masuk kembali agar sistem mencatat ID Anda.');
       return;
     }
 
@@ -56,7 +59,7 @@ export default function DosenDashboardLayout({ children }: { children: React.Rea
 
     setLoading(true);
     try {
-      // 🔌 PERBAIKAN 2: Menggunakan .select() untuk menangkap data hasil operasi update ke tabel 'user_dosen'
+      // 🔌 PROSES UPDATE: Menggunakan .select() untuk memastikan data benar-benar berubah di database Supabase
       const { data, error } = await supabase
         .from('user_dosen')
         .update({ password: passwordBaru })
@@ -65,14 +68,14 @@ export default function DosenDashboardLayout({ children }: { children: React.Rea
 
       if (error) throw error;
 
-      // ⚠️ PERBAIKAN 3: Proteksi sukses palsu. Jika data kosong berarti record tidak terpapar perubahan
+      // Proteksi jika data yang terubah kosong (berarti username tidak cocok di DB)
       if (!data || data.length === 0) {
-        setPesanError(`Gagal mengubah data: Akun dengan username "${usernameDosen}" tidak ditemukan di tabel user_dosen Supabase.`);
+        setPesanError(`Gagal: Akun dengan username "${usernameDosen}" tidak ditemukan di database Supabase.`);
         setLoading(false);
         return;
       }
 
-      alert('Sandi Dosen BENAR-BENAR BERHASIL diperbarui di database Supabase asli!');
+      alert('Sandi Dosen BERHASIL diperbarui di database Supabase asli!');
       setIsModalPasswordOpen(false);
       setPasswordBaru('');
       setKonfirmasiPassword('');
@@ -103,7 +106,10 @@ export default function DosenDashboardLayout({ children }: { children: React.Rea
               <p className="font-extrabold text-xs text-white flex items-center gap-1">
                 {namaDosen} <span className="text-[10px] text-emerald-200">{isMenuOpen ? '▲' : '▼'}</span>
               </p>
-              <p className="text-[9px] font-bold text-emerald-200 uppercase tracking-widest">User: {usernameDosen || 'Belum Login'}</p>
+              {/* 🛠️ DISINI PERBAIKANNYA: Jika usernameDosen ada, tampilkan. Jika tidak, beri penanda log login */}
+              <p className="text-[9px] font-bold text-emerald-200 uppercase tracking-widest">
+                USER: {usernameDosen ? usernameDosen : 'BELUM LOGIN'}
+              </p>
             </div>
             <div className="w-8 h-8 bg-white text-emerald-700 font-black text-xs flex items-center justify-center rounded-xl shadow-md uppercase">
               {namaDosen.charAt(0)}
@@ -163,7 +169,7 @@ export default function DosenDashboardLayout({ children }: { children: React.Rea
 
             <form onSubmit={handleSimpanPasswordDosen} className="p-5 space-y-4">
               {pesanError && (
-                <div className="bg-amber-50 border border-amber-200 text-amber-800 p-3 rounded-xl text-xs font-medium leading-relaxed">
+                <div className="p-2.5 bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold rounded-xl">
                   ⚠️ {pesanError}
                 </div>
               )}
@@ -174,9 +180,9 @@ export default function DosenDashboardLayout({ children }: { children: React.Rea
                 </label>
                 <input 
                   type="text" 
-                  value={usernameDosen || "Kosong - Harap Login Ulang"}
+                  value={usernameDosen || "Tidak terdeteksi"}
                   disabled
-                  className={`w-full px-3.5 py-2 border rounded-xl text-xs font-semibold cursor-not-allowed ${!usernameDosen ? 'bg-red-50 text-red-400 border-red-200' : 'bg-slate-50 text-slate-500 border-slate-200'}`}
+                  className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-400 cursor-not-allowed"
                 />
               </div>
 
