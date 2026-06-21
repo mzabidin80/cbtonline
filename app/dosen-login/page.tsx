@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { createClient } from '@supabase/supabase-js';
 
+// Konfigurasi Supabase
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
@@ -19,7 +20,7 @@ export default function DosenLoginPage() {
     setErrorMsg('');
 
     try {
-      // 🎯 Hubungkan ke tabel user_dosen sesuai database Supabase Anda
+      // 🎯 Mengambil data tepat dari tabel user_dosen
       const { data, error } = await supabase
         .from('user_dosen')
         .select('*')
@@ -33,14 +34,15 @@ export default function DosenLoginPage() {
         return;
       }
 
-      // Ambil nama lengkap dari database user_dosen
+      // Ambil nama lengkap dari kolom database user_dosen
       const namaLengkap = data.nama_lengkap || data.username || 'Dosen Pengajar';
 
-      // Simpan session ke LocalStorage dengan key yang seragam
-      localStorage.setItem('dosen_username', String(data.username));
-      localStorage.setItem('dosen_nama', String(namaLengkap));
+      // Simpan session khusus dosen agar tidak tabrakan dengan session mahasiswa
+      localStorage.setItem('user_username', String(data.username));
+      localStorage.setItem('user_nama', String(namaLengkap));
+      localStorage.setItem('user_role', 'dosen');
 
-      // Pindahkan ke halaman Dashboard Dosen Anda
+      // 🚀 Arahkan langsung ke halaman panel internal dosen
       window.location.href = '/dosen';
 
     } catch (err) {

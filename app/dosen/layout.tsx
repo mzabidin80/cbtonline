@@ -18,9 +18,9 @@ export default function DosenDashboardLayout({ children }: { children: React.Rea
   const [pesanError, setPesanError] = useState('');
 
   useEffect(() => {
-    // Membaca session yang disimpan oleh /dosen-login
-    const storedUsername = localStorage.getItem('dosen_username') || localStorage.getItem('username') || localStorage.getItem('user_username');
-    const storedNama = localStorage.getItem('dosen_nama') || localStorage.getItem('nama') || localStorage.getItem('user_nama');
+    // Sinkronisasi penuh membaca keys dari localStorage
+    const storedUsername = localStorage.getItem('user_username') || localStorage.getItem('dosen_username');
+    const storedNama = localStorage.getItem('user_nama') || localStorage.getItem('dosen_nama');
     
     if (storedUsername) setUsernameDosen(storedUsername);
     if (storedNama) setNamaDosen(storedNama);
@@ -36,7 +36,7 @@ export default function DosenDashboardLayout({ children }: { children: React.Rea
     setPesanError('');
 
     if (!usernameDosen) {
-      setPesanError('Sesi tidak terdeteksi. Silakan logout dan login kembali melalui /dosen-login.');
+      setPesanError('Sesi tidak ditemukan. Silakan masuk ulang.');
       return;
     }
 
@@ -52,6 +52,7 @@ export default function DosenDashboardLayout({ children }: { children: React.Rea
 
     setLoading(true);
     try {
+      // Menargetkan tabel 'user_dosen' dengan format query Supabase v2 yang benar (.select())
       const { data, error } = await supabase
         .from('user_dosen')
         .update({ password: passwordBaru })
@@ -61,12 +62,12 @@ export default function DosenDashboardLayout({ children }: { children: React.Rea
       if (error) throw error;
 
       if (!data || data.length === 0) {
-        setPesanError(`Gagal: Akun dengan username "${usernameDosen}" tidak ditemukan di database.`);
+        setPesanError(`Gagal: Akun "${usernameDosen}" tidak ditemukan di database.`);
         setLoading(false);
         return;
       }
 
-      alert('Sandi Dosen BERHASIL diperbarui di database Supabase!');
+      alert('Sandi Dosen BERHASIL diperbarui di database!');
       setIsModalPasswordOpen(false);
       setPasswordBaru('');
       setKonfirmasiPassword('');
@@ -96,7 +97,7 @@ export default function DosenDashboardLayout({ children }: { children: React.Rea
                 {namaDosen} <span className="text-[10px] text-emerald-200">{isMenuOpen ? '▲' : '▼'}</span>
               </p>
               <p className="text-[9px] font-bold text-emerald-200 uppercase tracking-widest">
-                USER: {usernameDosen ? usernameDosen : 'BELUM LOGIN'}
+                USER: {usernameDosen || 'BELUM LOGIN'}
               </p>
             </div>
             <div className="w-8 h-8 bg-white text-emerald-700 font-black text-xs flex items-center justify-center rounded-xl shadow-md uppercase">
