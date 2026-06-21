@@ -65,16 +65,22 @@ export default function RuangUjianPage() {
     setJawabanTerpilih({ ...jawabanTerpilih, [daftarSoal[nomorAktif].id]: opsi });
   };
 
-  // 🚀 Proses Hitung Nilai & Simpan Hasil ke Supabase
+// 🚀 Proses Hitung Nilai & Simpan Hasil ke Supabase
   const handleSelesaiUjian = async () => {
     let jumlahBenar = 0;
     
     daftarSoal.forEach((soal) => {
-      if (jawabanTerpilih[soal.id] === soal.kunci_jawaban) {
+      // PERBAIKAN: Ambil jawaban & kunci, lalu ubah jadi huruf besar dan buang spasinya
+      const jawabanUser = (jawabanTerpilih[soal.id] || '').trim().toUpperCase();
+      const kunciJawaban = (soal.kunci_jawaban || '').trim().toUpperCase();
+
+      // Bandingkan secara adil
+      if (jawabanUser === kunciJawaban) {
         jumlahBenar += 1;
       }
     });
 
+    // Menghitung persentase nilai (100 jika benar semua)
     const nilaiAkhir = Math.round((jumlahBenar / daftarSoal.length) * 100);
 
     try {
@@ -87,8 +93,8 @@ export default function RuangUjianPage() {
         }
       ]);
 
-      alert(`Ujian selesai! Skor Anda: ${nilaiAkhir}. Nilai sukses terekam aman di database.`);
-      window.location.href = '/dashboard';
+      alert(`Ujian selesai! Jawaban Benar: ${jumlahBenar} dari ${daftarSoal.length} soal. Skor Anda: ${nilaiAkhir}.`);
+      window.location.href = '/dashboard/riwayat'; // Langsung arahkan ke riwayat biar enak dilihat
     } catch (err) {
       alert('Terjadi kendala pengiriman nilai.');
     }
