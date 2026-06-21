@@ -7,49 +7,30 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export async function POST(request: Request) {
   try {
-    const { username, password } = await request.json();
+    // Membaca payload 'passwordBaru' yang dikirim dari form modal layout admin
+    const { username, passwordBaru } = await request.json();
 
-    if (!username || !password) {
+    if (!username || !passwordBaru) {
       return NextResponse.json(
-        { message: 'Username dan password wajib diisi.' },
+        { message: 'Username dan password baru wajib diisi.' },
         { status: 400 }
       );
     }
 
-    // 🔍 SEKARANG PERIKSA LANGSUNG KE TABEL user_admin
-    const { data: admin, error } = await supabase
+    // Eksekusi update langsung ke tabel baru 'user_admin'
+    const { error } = await supabase
       .from('user_admin')
-      .select('*')
-      .eq('username', username)
-      .single();
+      .update({ password: passwordBaru })
+      .eq('username', username);
 
-    // Jika username tidak ditemukan atau terjadi error di Supabase
-    if (error || !admin) {
-      return NextResponse.json(
-        { message: 'Username atau Password Admin salah!' },
-        { status: 401 }
-      );
+    if (error) {
+      throw error;
     }
 
-    // Pengecekan kecocokan password
-    // Catatan: Jika Anda menggunakan enkripsi (seperti bcrypt), gunakan compare() di sini.
-    if (admin.password !== password) {
-      return NextResponse.json(
-        { message: 'Username atau Password Admin salah!' },
-        { status: 401 }
-      );
-    }
-
-    // Jika sukses, kembalikan data admin beserta token/role
-    return NextResponse.json({
-      message: 'Login Berhasil',
-      user: {
-        username: admin.username,
-        nama: admin.nama_lengkap,
-        role: 'admin' // Tetap set sebagai admin untuk kebutuhan localStorage di frontend
-      }
-    }, { status: 200 });
-
+    return NextResponse.json(
+      { message: 'Password admin berhasil diperbarui di database Supabase.' },
+      { status: 200 }
+    );
   } catch (error: any) {
     return NextResponse.json(
       { message: error.message || 'Terjadi kesalahan sistem backend.' },
