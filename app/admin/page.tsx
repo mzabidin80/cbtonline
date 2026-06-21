@@ -20,23 +20,24 @@ export default function AdminDashboardPage() {
   useEffect(() => {
     async function getDashboardStats() {
       try {
-        // Ambil hitungan user berdasarkan role masing-masing dari tabel database
-        const { data: users, error } = await supabase
-          .from('users_cbt')
-          .select('role');
+        // Mengambil jumlah data dari masing-masing tabel baru secara paralel
+        const [
+          { count: countMhs },
+          { count: countDsn },
+          { count: countPws }
+        ] = await Promise.all([
+          supabase.from('user_peserta').select('*', { count: 'exact', head: true }),
+          supabase.from('user_dosen').select('*', { count: 'exact', head: true }),
+          supabase.from('user_pengawas').select('*', { count: 'exact', head: true })
+        ]);
 
-        if (!error && users) {
-          const mhs = users.filter(u => u.role === 'mahasiswa').length;
-          const dsn = users.filter(u => u.role === 'dosen').length;
-          const pws = users.filter(u => u.role === 'pengawas').length;
+        setStats(prev => ({
+          ...prev,
+          totalMahasiswa: countMhs || 0,
+          totalDosen: countDsn || 0,
+          totalPengawas: countPws || 0
+        }));
 
-          setStats(prev => ({
-            ...prev,
-            totalMahasiswa: mhs,
-            totalDosen: dsn,
-            totalPengawas: pws
-          }));
-        }
       } catch (err) {
         console.error('Gagal memuat statistik database:', err);
       } finally {
@@ -59,7 +60,7 @@ export default function AdminDashboardPage() {
         </p>
       </div>
 
-      {/* KARTU STATISTIK UTAMA (SINKRON DENGAN PORTAL BARU) */}
+      {/* KARTU STATISTIK UTAMA */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {/* Total Bank Soal */}
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80">
