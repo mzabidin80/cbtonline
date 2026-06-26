@@ -9,8 +9,8 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export default function AdminDashboardPage() {
   const [stats, setStats] = useState({
-    totalSoal: 120, // Nilai default statis dari rancangan Anda
-    totalSesi: 2,   // Nilai default statis dari rancangan Anda
+    totalSoal: 120, 
+    totalSesi: 2,   
     totalMahasiswa: 0,
     totalDosen: 0,
     totalPengawas: 0
@@ -20,7 +20,6 @@ export default function AdminDashboardPage() {
   useEffect(() => {
     async function getDashboardStats() {
       try {
-        // 🚀 LIVE DATA: Mengambil jumlah baris data nyata dari Supabase secara Paralel
         const [
           { count: countMhs },
           { count: countDsn },
@@ -37,7 +36,6 @@ export default function AdminDashboardPage() {
           totalDosen: countDsn || 0,
           totalPengawas: countPws || 0
         }));
-
       } catch (error) {
         console.error('Gagal memuat statistik dashboard:', error);
       } finally {
@@ -51,7 +49,7 @@ export default function AdminDashboardPage() {
   return (
     <div className="p-8 space-y-7 bg-slate-50 min-h-screen">
       
-      {/* BANNER SELAMAT DATANG (Sesuai Gambar) */}
+      {/* BANNER SELAMAT DATANG */}
       <div className="bg-gradient-to-r from-slate-800 to-slate-950 text-white p-7 rounded-2xl shadow-lg border border-slate-700/50 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h3 className="text-2xl font-black tracking-wide">Selamat Datang di Utama Administrator! 🔐</h3>
@@ -67,11 +65,9 @@ export default function AdminDashboardPage() {
         </div>
       </div>
 
-      {/* INDIKATOR KARTU STATISTIK REAL-TIME (Sesuai Gambar) */}
+      {/* INDIKATOR KARTU STATISTIK REAL-TIME */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        
-        {/* KARTU 1: SOAL */}
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80 flex flex-col justify-between transition hover:shadow-md">
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80 flex flex-col justify-between">
           <div>
             <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Paket Soal</p>
             <p className="text-3xl font-black text-slate-800 mt-1.5">{stats.totalSoal}</p>
@@ -79,8 +75,7 @@ export default function AdminDashboardPage() {
           <span className="text-[10px] text-slate-400 font-mono mt-3 pt-2 border-t border-slate-100">Aktif & Tersedia</span>
         </div>
 
-        {/* KARTU 2: SESI */}
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80 flex flex-col justify-between transition hover:shadow-md">
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80 flex flex-col justify-between">
           <div>
             <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Sesi Ujian Aktif</p>
             <p className="text-3xl font-black text-indigo-600 mt-1.5">{stats.totalSesi}</p>
@@ -88,62 +83,44 @@ export default function AdminDashboardPage() {
           <span className="text-[10px] text-slate-400 font-mono mt-3 pt-2 border-t border-slate-100">Sedang Berjalan</span>
         </div>
 
-        {/* KARTU 3: MAHASISWA */}
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80 flex flex-col justify-between transition hover:shadow-md">
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80 flex flex-col justify-between">
           <div>
             <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Mahasiswa Terdaftar</p>
             <p className="text-3xl font-black text-emerald-600 mt-1.5">
-              {loading ? <span className="text-sm font-normal text-slate-300 animate-pulse">Loading...</span> : stats.totalMahasiswa}
+              {loading ? <span className="text-sm font-normal text-slate-300 animate-pulse">...</span> : stats.totalMahasiswa}
             </p>
           </div>
           <span className="text-[10px] text-slate-400 font-mono mt-3 pt-2 border-t border-slate-100">Akun Peserta Ujian</span>
         </div>
 
-        {/* KARTU 4: DOSEN / PENGAWAS */}
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80 flex flex-col justify-between transition hover:shadow-md">
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80 flex flex-col justify-between">
           <div>
             <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Dosen / Pengawas</p>
-            <p className="text-3xl font-black text-amber-500 mt-1.5 flex items-baseline gap-1">
-              {loading ? (
-                <span className="text-sm font-normal text-slate-300 animate-pulse">Loading...</span>
-              ) : (
-                <>
-                  {stats.totalDosen} <span className="text-xs font-bold text-slate-400">/</span> {stats.totalPengawas}
-                </>
-              )}
+            <p className="text-3xl font-black text-amber-500 mt-1.5">
+              {loading ? <span className="text-sm font-normal text-slate-300 animate-pulse">...</span> : `${stats.totalDosen} / ${stats.totalPengawas}`}
             </p>
           </div>
           <span className="text-[10px] text-slate-400 font-mono mt-3 pt-2 border-t border-slate-100">Dsn / Pws Aktif</span>
         </div>
-
       </div>
 
-      {/* PANEL PINTU PINTAS ADMINISTRATOR (Sesuai Gambar) */}
+      {/* PANEL PINTU PINTAS ADMINISTRATOR (SESUAI GAMBAR ASLI - UTUH) */}
       <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80">
         <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-4 border-b border-slate-100 pb-3">
-          ⚡ Akses Cepat Pengaturan Akun & Ujian
+          ⚡ Akses Cepat Pengaturan Akun
         </h4>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           
-          <a 
-            href="/admin/manajemen/peserta" 
-            className="p-4 bg-slate-50 hover:bg-indigo-50/50 hover:text-indigo-700 rounded-xl transition border border-slate-200/60 font-semibold text-xs text-slate-600 flex items-center gap-2.5 group"
-          >
-            <span className="group-hover:scale-110 transition">👥</span> Atur Data Master Pengguna
+          <a href="/admin/manajemen/peserta" className="p-4 bg-slate-50 hover:bg-blue-50 hover:text-blue-700 rounded-xl transition border border-slate-200/60 font-semibold text-xs text-slate-600 flex items-center gap-2.5">
+            👥 Atur Data Master Pengguna
           </a>
 
-          <a 
-            href="/admin/ujian-online/paket-soal" 
-            className="p-4 bg-slate-50 hover:bg-emerald-50/50 hover:text-emerald-700 rounded-xl transition border border-slate-200/60 font-semibold text-xs text-slate-600 flex items-center gap-2.5 group"
-          >
-            <span className="group-hover:scale-110 transition">📝</span> Buat & Sunting Paket Soal
+          <a href="/admin/ujian-online/paket-soal" className="p-4 bg-slate-50 hover:bg-emerald-50 hover:text-emerald-700 rounded-xl transition border border-slate-200/60 font-semibold text-xs text-slate-600 flex items-center gap-2.5">
+            📝 Buat & Sunting Paket Soal
           </a>
 
-          <a 
-            href="/admin/data-user-admin" 
-            className="p-4 bg-slate-50 hover:bg-amber-50/50 hover:text-amber-700 rounded-xl transition border border-slate-200/60 font-semibold text-xs text-slate-600 flex items-center gap-2.5 group"
-          >
-            <span className="group-hover:scale-110 transition">🛡️</span> Kelola Akun Administrator
+          <a href="/admin/rekap-nilai" className="p-4 bg-slate-50 hover:bg-amber-50 hover:text-amber-700 rounded-xl transition border border-slate-200/60 font-semibold text-xs text-slate-600 flex items-center gap-2.5">
+            📊 Rekapitulasi Perolehan Nilai
           </a>
 
         </div>
