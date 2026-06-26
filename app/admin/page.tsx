@@ -9,8 +9,8 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export default function AdminDashboardPage() {
   const [stats, setStats] = useState({
-    totalSoal: 120, // Nilai default statis awal Anda
-    totalSesi: 2,
+    totalSoal: 120, // Nilai default statis dari rancangan Anda
+    totalSesi: 2,   // Nilai default statis dari rancangan Anda
     totalMahasiswa: 0,
     totalDosen: 0,
     totalPengawas: 0
@@ -20,7 +20,7 @@ export default function AdminDashboardPage() {
   useEffect(() => {
     async function getDashboardStats() {
       try {
-        // Mengambil jumlah data dari masing-masing tabel baru secara paralel
+        // 🚀 LIVE DATA: Mengambil jumlah baris data nyata dari Supabase secara Paralel
         const [
           { count: countMhs },
           { count: countDsn },
@@ -38,8 +38,8 @@ export default function AdminDashboardPage() {
           totalPengawas: countPws || 0
         }));
 
-      } catch (err) {
-        console.error('Gagal memuat statistik database:', err);
+      } catch (error) {
+        console.error('Gagal memuat statistik dashboard:', error);
       } finally {
         setLoading(false);
       }
@@ -49,75 +49,106 @@ export default function AdminDashboardPage() {
   }, []);
 
   return (
-    <div className="p-8 space-y-6 bg-slate-50 min-h-screen">
-      <title>Dashboard Admin - CBT Online</title>
-
-      {/* BANNER UTAMA */}
-      <div className="bg-gradient-to-r from-blue-700 to-indigo-600 text-white p-6 rounded-2xl shadow-md">
-        <h3 className="text-2xl font-black tracking-tight">Selamat Datang di Panel Utama Dashboard Backend 👋</h3>
-        <p className="text-sm text-blue-100 mt-1">
-          Kelola data master peserta, manajemen bank soal, dan konfigurasikan jadwal sesi pelaksanaan ujian secara terpusat.
-        </p>
-      </div>
-
-      {/* KARTU STATISTIK UTAMA */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {/* Total Bank Soal */}
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80">
-          <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Bank Soal</p>
-          <div className="flex justify-between items-baseline mt-2">
-            <p className="text-3xl font-black text-slate-800">{stats.totalSoal} <span className="text-sm font-normal text-slate-500">Butir</span></p>
-            <a href="/admin/ujian-online/paket-soal" className="text-xs text-blue-600 font-bold hover:underline">Lihat Detail</a>
-          </div>
+    <div className="p-8 space-y-7 bg-slate-50 min-h-screen">
+      
+      {/* BANNER SELAMAT DATANG (Sesuai Gambar) */}
+      <div className="bg-gradient-to-r from-slate-800 to-slate-950 text-white p-7 rounded-2xl shadow-lg border border-slate-700/50 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h3 className="text-2xl font-black tracking-wide">Selamat Datang di Utama Administrator! 🔐</h3>
+          <p className="text-xs text-slate-300 mt-1 max-w-2xl font-medium">
+            Gunakan bilah menu navigasi di sebelah kiri untuk mengatur manajemen data master pengguna, melakukan sinkronisasi konfigurasi ujian, serta memantau kesehatan server CBT online.
+          </p>
         </div>
-
-        {/* Jadwal Ujian Aktif */}
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80">
-          <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Jadwal Ujian Aktif</p>
-          <div className="flex justify-between items-baseline mt-2">
-            <p className="text-3xl font-black text-emerald-600">{stats.totalSesi} <span className="text-sm font-normal text-slate-500">Sesi</span></p>
-            <a href="/admin/ujian-online/sesi" className="text-xs text-emerald-600 font-bold hover:underline">Lihat Sesi</a>
-          </div>
-        </div>
-
-        {/* Mahasiswa Terdaftar */}
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80">
-          <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Mahasiswa (Peserta)</p>
-          <div className="flex justify-between items-baseline mt-2">
-            <p className="text-3xl font-black text-blue-600">
-              {loading ? '...' : stats.totalMahasiswa} <span className="text-sm font-normal text-slate-500">Orang</span>
-            </p>
-            <a href="/admin/manajemen/peserta" className="text-xs text-blue-600 font-bold hover:underline">Kelola</a>
-          </div>
-        </div>
-
-        {/* Staf Pengajar & Lapangan */}
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80">
-          <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Dosen & Pengawas</p>
-          <div className="flex justify-between items-baseline mt-2">
-            <p className="text-3xl font-black text-indigo-600">
-              {loading ? '...' : `${stats.totalDosen} / ${stats.totalPengawas}`}
-            </p>
-            <span className="text-xs text-slate-400 font-medium font-mono">Dsn / Pws</span>
-          </div>
+        <div className="bg-slate-700/50 backdrop-blur px-4 py-2 rounded-xl border border-slate-600 text-center">
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Status Server</p>
+          <p className="text-xs font-bold text-emerald-400 flex items-center gap-1.5 mt-0.5 justify-center">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> ONLINE
+          </p>
         </div>
       </div>
 
-      {/* PANEL PINTU PINTAS ADMINISTRATOR */}
+      {/* INDIKATOR KARTU STATISTIK REAL-TIME (Sesuai Gambar) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        
+        {/* KARTU 1: SOAL */}
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80 flex flex-col justify-between transition hover:shadow-md">
+          <div>
+            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Paket Soal</p>
+            <p className="text-3xl font-black text-slate-800 mt-1.5">{stats.totalSoal}</p>
+          </div>
+          <span className="text-[10px] text-slate-400 font-mono mt-3 pt-2 border-t border-slate-100">Aktif & Tersedia</span>
+        </div>
+
+        {/* KARTU 2: SESI */}
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80 flex flex-col justify-between transition hover:shadow-md">
+          <div>
+            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Sesi Ujian Aktif</p>
+            <p className="text-3xl font-black text-indigo-600 mt-1.5">{stats.totalSesi}</p>
+          </div>
+          <span className="text-[10px] text-slate-400 font-mono mt-3 pt-2 border-t border-slate-100">Sedang Berjalan</span>
+        </div>
+
+        {/* KARTU 3: MAHASISWA */}
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80 flex flex-col justify-between transition hover:shadow-md">
+          <div>
+            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Mahasiswa Terdaftar</p>
+            <p className="text-3xl font-black text-emerald-600 mt-1.5">
+              {loading ? <span className="text-sm font-normal text-slate-300 animate-pulse">Loading...</span> : stats.totalMahasiswa}
+            </p>
+          </div>
+          <span className="text-[10px] text-slate-400 font-mono mt-3 pt-2 border-t border-slate-100">Akun Peserta Ujian</span>
+        </div>
+
+        {/* KARTU 4: DOSEN / PENGAWAS */}
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80 flex flex-col justify-between transition hover:shadow-md">
+          <div>
+            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Dosen / Pengawas</p>
+            <p className="text-3xl font-black text-amber-500 mt-1.5 flex items-baseline gap-1">
+              {loading ? (
+                <span className="text-sm font-normal text-slate-300 animate-pulse">Loading...</span>
+              ) : (
+                <>
+                  {stats.totalDosen} <span className="text-xs font-bold text-slate-400">/</span> {stats.totalPengawas}
+                </>
+              )}
+            </p>
+          </div>
+          <span className="text-[10px] text-slate-400 font-mono mt-3 pt-2 border-t border-slate-100">Dsn / Pws Aktif</span>
+        </div>
+
+      </div>
+
+      {/* PANEL PINTU PINTAS ADMINISTRATOR (Sesuai Gambar) */}
       <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80">
-        <h4 className="text-sm font-bold text-slate-700 uppercase tracking-wider mb-4">Akses Cepat Pengaturan Akun</h4>
+        <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-4 border-b border-slate-100 pb-3">
+          ⚡ Akses Cepat Pengaturan Akun & Ujian
+        </h4>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <a href="/admin/manajemen/peserta" className="p-4 bg-slate-50 hover:bg-blue-50 hover:text-blue-700 rounded-xl transition border border-slate-200/60 font-semibold text-sm text-slate-600 flex items-center gap-2">
-            👥 Atur Data Master Pengguna
+          
+          <a 
+            href="/admin/manajemen/peserta" 
+            className="p-4 bg-slate-50 hover:bg-indigo-50/50 hover:text-indigo-700 rounded-xl transition border border-slate-200/60 font-semibold text-xs text-slate-600 flex items-center gap-2.5 group"
+          >
+            <span className="group-hover:scale-110 transition">👥</span> Atur Data Master Pengguna
           </a>
-          <a href="/admin/ujian-online/paket-soal" className="p-4 bg-slate-50 hover:bg-emerald-50 hover:text-emerald-700 rounded-xl transition border border-slate-200/60 font-semibold text-sm text-slate-600 flex items-center gap-2">
-            📝 Buat & Sunting Paket Soal
+
+          <a 
+            href="/admin/ujian-online/paket-soal" 
+            className="p-4 bg-slate-50 hover:bg-emerald-50/50 hover:text-emerald-700 rounded-xl transition border border-slate-200/60 font-semibold text-xs text-slate-600 flex items-center gap-2.5 group"
+          >
+            <span className="group-hover:scale-110 transition">📝</span> Buat & Sunting Paket Soal
           </a>
-          <a href="/admin/rekap-hasil-nilai" className="p-4 bg-slate-50 hover:bg-indigo-50 hover:text-indigo-700 rounded-xl transition border border-slate-200/60 font-semibold text-sm text-slate-600 flex items-center gap-2">
-            📊 Rekapitulasi Perolehan Nilai
+
+          <a 
+            href="/admin/data-user-admin" 
+            className="p-4 bg-slate-50 hover:bg-amber-50/50 hover:text-amber-700 rounded-xl transition border border-slate-200/60 font-semibold text-xs text-slate-600 flex items-center gap-2.5 group"
+          >
+            <span className="group-hover:scale-110 transition">🛡️</span> Kelola Akun Administrator
           </a>
+
         </div>
       </div>
+
     </div>
   );
 }
